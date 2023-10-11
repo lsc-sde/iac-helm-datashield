@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -c -f opal-docker-compose.yaml
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: opal
+  name: opal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: opal
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -c -f opal-docker-compose.yaml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: opal
+    spec:
+      containers:
+        - env:
+            - name: MONGO_HOST
+              value: mongo
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MYSQLDATA_DATABASE
+            - name: MYSQLDATA_HOST
+              value: mysqldata
+            - name: MYSQLDATA_PASSWORD
+            - name: MYSQLDATA_USER
+            - name: OPAL_ADMINISTRATOR_PASSWORD
+            - name: ROCK_HOSTS
+              value: rock:8085
+          image: obiba/opal:latest
+          name: opal
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /srv
+              name: opal-claim0
+      restartPolicy: Always
+      volumes:
+        - name: opal-claim0
+          persistentVolumeClaim:
+            claimName: opal-claim0
+status: {}
