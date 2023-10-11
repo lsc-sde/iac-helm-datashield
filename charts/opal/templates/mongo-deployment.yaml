@@ -1,10 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -c -f opal-docker-compose.yaml
-    kompose.version: 1.26.0 (40646f47)
-  creationTimestamp: null
+  annotations: {}
   labels:
     io.kompose.service: mongo
   name: mongo
@@ -16,10 +13,7 @@ spec:
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert -c -f opal-docker-compose.yaml
-        kompose.version: 1.26.0 (40646f47)
-      creationTimestamp: null
+      annotations: {}
       labels:
         io.kompose.service: mongo
     spec:
