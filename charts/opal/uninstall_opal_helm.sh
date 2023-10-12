@@ -13,14 +13,8 @@ NS=datashield
 HELM_RELEASE_NAME=opal01
 VERSION=0.0.1
 
-helm upgrade \
-    --cleanup-on-fail \
-    --install $HELM_RELEASE_NAME . \
+helm uninstall $HELM_RELEASE_NAME \
     --namespace $NS \
-    --create-namespace \
-    --version $VERSION \
-    --values ./values.yaml \
-    # --dry-run > dry-run.yaml
 
 #====================================================================
 kubectl config use-context $CURRENTAKSCONTEXT

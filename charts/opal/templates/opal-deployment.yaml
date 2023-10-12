@@ -19,30 +19,41 @@ spec:
         io.kompose.service: opal
     spec:
       containers:
-        - env:
+        - image: obiba/opal:latest
+          name: opal
+          env:
             - name: MONGO_HOST
               value: mongo
             - name: MONGO_PORT
               value: "27017"
             - name: MYSQLDATA_DATABASE
+              value: dsdb
             - name: MYSQLDATA_HOST
               value: mysqldata
             - name: MYSQLDATA_PASSWORD
+              value: P@55w0rd
             - name: MYSQLDATA_USER
+              value: dsuser
             - name: OPAL_ADMINISTRATOR_PASSWORD
+              value: P@55w0rd
             - name: ROCK_HOSTS
               value: rock:8085
-          image: obiba/opal:latest
-          name: opal
           ports:
             - containerPort: 8080
           resources: {}
           volumeMounts:
             - mountPath: /srv
-              name: opal-claim0
+              name: opal-storage
+            # - mountPath: /src/conf
+            #   name: opal-configmap
       restartPolicy: Always
       volumes:
-        - name: opal-claim0
+        - name: opal-storage
           persistentVolumeClaim:
-            claimName: opal-claim0
-status: {}
+            claimName: opal-storage
+        # - name: opal-configmap
+        #   configMap:
+        #     name: opal-configmap
+        #     items:
+        #       - key: properties
+        #         path: opal-config.properties

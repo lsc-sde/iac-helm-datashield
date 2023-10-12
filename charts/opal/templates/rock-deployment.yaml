@@ -10,7 +10,6 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: rock
-  strategy: {}
   template:
     metadata:
       annotations: {}
@@ -22,4 +21,3 @@ spec:
           name: rock
           resources: {}
       restartPolicy: Always
-status: {}

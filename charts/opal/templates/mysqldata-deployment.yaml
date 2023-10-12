@@ -20,10 +20,14 @@ spec:
       containers:
         - env:
             - name: MYSQL_DATABASE
+              value: dsdb
             - name: MYSQL_PASSWORD
+              value: P@55w0rd
             - name: MYSQL_USER
+              value: dsuser
+            - name: MYSQL_RANDOM_ROOT_PASSWORD
+              value: "TRUE"
           image: mysql
           name: mysqldata
           resources: {}
       restartPolicy: Always
-status: {}

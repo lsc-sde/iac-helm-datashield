@@ -1,8 +1,7 @@
-name: opal-docker-compose
+apiVersion: v2
+name: datashield
 description: Helm chart for installation of DataSHIELD Opal Server
 version: 0.0.1
-apiVersion: v1
 keywords:
   - opal-docker-compose
-sources:
-home:
+type: application

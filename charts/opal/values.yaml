@@ -1,0 +1,18 @@
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/app-root: /opal
+    nginx.ingress.kubernetes.io/proxy-body-size: 32m
+  hosts:
+    - host: ds.xlthtr.nhs.uk
+      paths:
+        - path: /
+          pathType: Prefix
+#=============================================================================
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: http
