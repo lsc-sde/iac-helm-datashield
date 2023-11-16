@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    io.kompose.service: rock
+  name: rock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: rock
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        io.kompose.service: rock
+    spec:
+      containers:
+        - image: obiba/rock:latest
+          name: rock
+          resources: {}
+      restartPolicy: Always

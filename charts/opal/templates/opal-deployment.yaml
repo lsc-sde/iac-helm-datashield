@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    io.kompose.service: opal
+  name: opal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: opal
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+      labels:
+        io.kompose.service: opal
+    spec:
+      containers:
+        - image: obiba/opal:latest
+          name: opal
+          env:
+            - name: MONGO_HOST
+              value: mongo
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MYSQLDATA_DATABASE
+              value: dsdb
+            - name: MYSQLDATA_HOST
+              value: mysqldata
+            - name: MYSQLDATA_PASSWORD
+              value: P@55w0rd
+            - name: MYSQLDATA_USER
+              value: dsuser
+            - name: OPAL_ADMINISTRATOR_PASSWORD
+              value: P@55w0rd
+            - name: ROCK_HOSTS
+              value: rock:8085
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /srv
+              name: opal-storage
+            # - mountPath: /src/conf
+            #   name: opal-configmap
+      restartPolicy: Always
+      volumes:
+        - name: opal-storage
+          persistentVolumeClaim:
+            claimName: opal-storage
+        # - name: opal-configmap
+        #   configMap:
+        #     name: opal-configmap
+        #     items:
+        #       - key: properties
+        #         path: opal-config.properties

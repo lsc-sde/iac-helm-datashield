@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    io.kompose.service: mica
+  name: mica
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mica
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        io.kompose.service: mica
+    spec:
+      containers:
+        - image: obiba/mica:5.3
+          name: mica
+          resources: {}
+          env:
+            - name: JAVA_OPTS
+              value: -Xmx2G
+            - name: MICA_ADMINISTRATOR_PASSWORD
+              value: P@55w0rd
+            - name: MONGO_HOST
+              value: mongo
+            - name: MONGO_PORT
+              value: "27017"
+            - name: OPAL_URL
+              value: http://opal:8080
+            - name: AGATE_URL
+              value: http://agate:8081
+      restartPolicy: Always
