@@ -48,6 +48,8 @@ data:
     ##
     # Server settings
     ##
+
+
     # The context path when server is accessed at a subdirectory
     # (for instance in http://example.org/opal the context path is /opal). Default is empty.
     org.obiba.opal.server.context-path=/opal
@@ -84,6 +86,8 @@ data:
     # Number of times the user password is hashed for attack resiliency
     #org.obiba.opal.security.password.nbHashIterations=10000
 
+    # Cross Site Resource Forgery
+    csrf.allowed=172.18.16.233
     ##
     # Email settings
     ##

@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../comorbidity/stratic_helm"
+		}
+	],
+	"settings": {}
+}
