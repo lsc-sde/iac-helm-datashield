@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: opal-storage
+  name: opal-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  # volumeMode: Filesystem
+  storageClassName: default
+---
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: opal-storage
+#   labels:
+#     io.kompose.service: opal-storage
+# spec:
+#   capacity:
+#     storage: 5Gi
+#   accessModes:
+#     - ReadWriteMany
+#   persistentVolumeReclaimPolicy: Retain
+#   storageClassName: default
+#   default:
+#     secretName: secret-stlthlanderdev
+#     secretNamespace: default
+#     shareName: datashield-opal
+#     readOnly: false
+#   mountOptions:
+#     - dir_mode=0777
+#     - file_mode=0777
+#     - nobrl
