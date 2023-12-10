@@ -44,16 +44,23 @@ spec:
           volumeMounts:
             - mountPath: /srv
               name: opal-storage
-            # - mountPath: /src/conf
-            #   name: opal-configmap
+      initContainers:
+        - name: init-myservice
+          image: busybox:1.28
+          command: ['sh', '-c', "cp /tmp/opal-config.properties /srv/conf/opal-config.properties"]
+          volumeMounts:
+            - mountPath: /srv
+              name: opal-storage
+            - mountPath: /tmp
+              name: opal-configmap
       restartPolicy: Always
       volumes:
         - name: opal-storage
           persistentVolumeClaim:
             claimName: opal-storage
-        # - name: opal-configmap
-        #   configMap:
-        #     name: opal-configmap
-        #     items:
-        #       - key: properties
-        #         path: opal-config.properties
+        - name: opal-configmap
+          configMap:
+            name: opal-configmap
+            items:
+              - key: properties
+                path: opal-config.properties

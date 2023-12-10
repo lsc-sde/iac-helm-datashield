@@ -52,7 +52,7 @@ data:
 
     # The context path when server is accessed at a subdirectory
     # (for instance in http://example.org/opal the context path is /opal). Default is empty.
-    org.obiba.opal.server.context-path=/opal
+    # org.obiba.opal.server.context-path=/opal
 
     # Port number for SSH connections
     # Default: 8022
@@ -87,7 +87,7 @@ data:
     #org.obiba.opal.security.password.nbHashIterations=10000
 
     # Cross Site Resource Forgery
-    csrf.allowed=172.18.16.233
+    csrf.allowed=landertre-dev.org
     ##
     # Email settings
     ##

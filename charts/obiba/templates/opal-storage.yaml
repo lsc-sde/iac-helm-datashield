@@ -10,28 +10,31 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  # volumeMode: Filesystem
-  storageClassName: default
+  volumeName: opal-storage
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  storageClassName: azurefile
 ---
-# apiVersion: v1
-# kind: PersistentVolume
-# metadata:
-#   name: opal-storage
-#   labels:
-#     io.kompose.service: opal-storage
-# spec:
-#   capacity:
-#     storage: 5Gi
-#   accessModes:
-#     - ReadWriteMany
-#   persistentVolumeReclaimPolicy: Retain
-#   storageClassName: default
-#   default:
-#     secretName: secret-stlthlanderdev
-#     secretNamespace: default
-#     shareName: datashield-opal
-#     readOnly: false
-#   mountOptions:
-#     - dir_mode=0777
-#     - file_mode=0777
-#     - nobrl
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: opal-storage
+  labels:
+    io.kompose.service: opal-storage
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azurefile
+  azureFile:
+    secretName: stobiba-secret
+    secretNamespace: default
+    shareName: datashield-opal
+    readOnly: false
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - nobrl
