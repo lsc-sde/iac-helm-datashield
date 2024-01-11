@@ -20,6 +20,11 @@ spec:
         - image: obiba/mica:5.3
           name: mica
           resources: {}
+          # command: ["/bin/bash"]
+          # args:
+          #   - "-c"
+          #   - "while true; do echo hello; sleep 10;done"
+            # - "chown -R mica $MICA_HOME; exec gosu mica /opt/mica/bin/start.sh"
           env:
             - name: JAVA_OPTS
               value: -Xmx2G

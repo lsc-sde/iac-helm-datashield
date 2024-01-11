@@ -30,7 +30,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: azurefile
   azureFile:
-    secretName: secret-stlthlanderdev
+    secretName: stobiba-secret
     secretNamespace: default
     shareName: datashield-opal
     readOnly: false
