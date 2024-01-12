@@ -29,7 +29,7 @@ spec:
             - name: MYSQLDATA_DATABASE
               value: dsdb
             - name: MYSQLDATA_HOST
-              value: mysqldata
+              value: mysqldata-service
             - name: MYSQLDATA_PASSWORD
               value: P@55w0rd
             - name: MYSQLDATA_USER

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldata-service
+spec:
+  ports:
+    - name: tcp
+      port: 3306    
+      targetPort: 3306
+  selector:
+    io.kompose.service: mysqldata

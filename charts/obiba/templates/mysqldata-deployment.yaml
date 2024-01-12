@@ -29,5 +29,7 @@ spec:
               value: "TRUE"
           image: mysql
           name: mysqldata
+          ports:
+            - containerPort: 3306
           resources: {}
       restartPolicy: Always
