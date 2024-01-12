@@ -19,5 +19,7 @@ spec:
       containers:
         - image: obiba/rock:latest
           name: rock
+          ports:
+            - containerPort: 8085
           resources: {}
       restartPolicy: Always
