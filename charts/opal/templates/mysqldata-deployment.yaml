@@ -31,5 +31,12 @@ spec:
           name: mysqldata
           ports:
             - containerPort: 3306
+          volumeMounts:
+          - name: mysql-storage
+            mountPath: /var/lib/mysql
           resources: {}
       restartPolicy: Always
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-storage-claim-1

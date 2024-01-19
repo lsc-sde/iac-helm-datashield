@@ -21,4 +21,10 @@ spec:
         - image: mongo:6.0
           name: mongo
           resources: {}
-      restartPolicy: Always
+          volumeMounts:
+          - name: "mongo-data-dir"
+            mountPath: "/data/db"
+      volumes:
+      - name: "mongo-data-dir"
+        persistentVolumeClaim:
+          claimName: "mongo-storage-claim-1"
