@@ -1,0 +1,37 @@
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: datashield-ingress
+  labels: {}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 32m
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    cert-manager.io/cluster-issuer: letsencrypt
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  tls: # < placing a host in the TLS config will determine what ends up in the cert's subjectAltNames
+  - hosts:
+    - landertre-dev.org
+    secretName: datashieldingress-cert
+  rules:
+    - host: landertre-dev.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ds-opal
+                port:
+                  name: "opal"
+          # - path: /opal(/|$)(.*)
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: ds-opal
+          #       port:
+          #         name: "opal"
+
+
