@@ -1,0 +1,10 @@
+
+opal:
+  env_vars:
+    OPAL_ADMINISTRATOR_PASSWORD: P@55w0rd
+    OPAL_DEMO_USER_NAME: bob
+    OPAL_DEMO_USER_PASSWORD: P@55w0rd1
+    OPAL_DEMO_PROJECT: DEMO
+    OPAL_DEMO_TABLE: CNSIM1
+    OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM1.csv
+  

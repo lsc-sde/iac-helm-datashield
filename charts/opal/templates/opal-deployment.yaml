@@ -35,21 +35,42 @@ spec:
             - name: MYSQLDATA_USER
               value: dsuser
             - name: OPAL_ADMINISTRATOR_PASSWORD
-              value: P@55w0rd
+              value: {{ .Values.opal.env_vars.OPAL_ADMINISTRATOR_PASSWORD }}
             - name: ROCK_HOSTS
               value: rock:8085
             - name: CSRF_ALLOWED
               value: datashield1.liv.ac.uk,landertre-dev.org 
             - name: org.obiba.opal.https.port
               value: "-1"
+            - name: OPAL_DEMO_USER_NAME
+              value: {{ .Values.opal.env_vars.OPAL_DEMO_USER_NAME }}
+            - name: OPAL_DEMO_USER_PASSWORD
+              value: {{ .Values.opal.env_vars.OPAL_DEMO_USER_PASSWORD }}
+            - name: OPAL_DEMO_PROJECT
+              value: {{ .Values.opal.env_vars.OPAL_DEMO_PROJECT }}
+            - name: OPAL_DEMO_TABLE
+              value: {{ .Values.opal.env_vars.OPAL_DEMO_TABLE }}
+            - name: OPAL_DEMO_SOURCE_DATA_URL
+              value: {{ .Values.opal.env_vars.OPAL_DEMO_SOURCE_DATA_URL }}
+            - name: dummy
+              value: dummy3
           ports:
             - containerPort: 8080
           resources: {}
           volumeMounts:
-            - mountPath: /srv
-              name: opal-storage
+            - name: opal-storage
+              mountPath: /srv  
+            - name: opal-demo-customisations
+              mountPath: /demo-cusomisations
+          #lifecycle:
+          #  postStart:
+          #    exec:
+          #      comamnd: ["/bin/bash", "-c"]
       restartPolicy: Always
       volumes:
       - name: opal-storage
         persistentVolumeClaim:
           claimName: opal-storage-claim-1
+      - name: opal-demo-customisations
+        configMap:
+          name: opal-demo-configmap

@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opal-demo-configmap
+data:
+  opal-demo-customisation.sh: |-
+    #!/usr/bin/env bash
+
+    # This script is run by the opal container on startup.
+
+    # https://opaldoc.obiba.org/en/latest/python-user-guide/index.html
+
+    touch /doing_local_customisation.txt
+
+    # Check opal python client is installed
+    whereis opal
+
+    # Most of these will just default to localhost
+
+    # Get the verion of opal
+    opal system --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --version
+
+    # Add the NORMAL DEMO_USER as defined in the values.yaml
+    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name $OPAL_DEMO_USER_NAME --upassword $OPAL_DEMO_USER_PASSWORD
+
+    # Add a project
+    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name $OPAL_DEMO_PROJECT --database mongodb
+
+    # Add the CNSIM1 data to the project
+    mkdir temp
+    cd temp
+    #wget -O $filename https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM1.csv
+    wget $OPAL_DEMO_SOURCE_DATA_URL
+
+    opal_fs_path="/home/administrator"
+    opal_file_path="$opal_fs_path/`basename $OPAL_DEMO_SOURCE_DATA_URL`"
+
+    opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename $OPAL_DEMO_SOURCE_DATA_URL` $opal_fs_path
+
+
+    opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination $OPAL_DEMO_PROJECT --path $opal_file_path  --tables $OPAL_DEMO_TABLE --separator , --type Participant --valueType decimal
+
+    cd ..
+    rm -rf temp
+
+    touch /finished_local_customisation.txt
