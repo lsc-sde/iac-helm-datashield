@@ -53,7 +53,7 @@ spec:
             - name: OPAL_DEMO_SOURCE_DATA_URL
               value: {{ .Values.opal.env_vars.OPAL_DEMO_SOURCE_DATA_URL }}
             - name: dummy
-              value: dummy3
+              value: dummy8
           ports:
             - containerPort: 8080
           resources: {}
@@ -61,11 +61,11 @@ spec:
             - name: opal-storage
               mountPath: /srv  
             - name: opal-demo-customisations
-              mountPath: /demo-cusomisations
-          #lifecycle:
-          #  postStart:
-          #    exec:
-          #      comamnd: ["/bin/bash", "-c"]
+              mountPath: /demo-customisations
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash", "-c", "/demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1" ]
       restartPolicy: Always
       volumes:
       - name: opal-storage
@@ -74,3 +74,4 @@ spec:
       - name: opal-demo-customisations
         configMap:
           name: opal-demo-configmap
+          defaultMode: 0777

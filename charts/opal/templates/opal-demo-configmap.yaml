@@ -15,9 +15,18 @@ data:
     # Check opal python client is installed
     whereis opal
 
+    echo "Check opal has started before trying to add data etc"
+    until opal system --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --version
+    do
+      echo "Opal not up yet, sleeping..."
+      sleep 5
+    done
+
+
     # Most of these will just default to localhost
 
     # Get the verion of opal
+    echo "Opal version:"
     opal system --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --version
 
     # Add the NORMAL DEMO_USER as defined in the values.yaml
@@ -27,8 +36,9 @@ data:
     opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name $OPAL_DEMO_PROJECT --database mongodb
 
     # Add the CNSIM1 data to the project
-    mkdir temp
-    cd temp
+    cd /tmp
+    mkdir opal-config-temp
+    cd opal-config-temp
     #wget -O $filename https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM1.csv
     wget $OPAL_DEMO_SOURCE_DATA_URL
 
@@ -37,10 +47,9 @@ data:
 
     opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename $OPAL_DEMO_SOURCE_DATA_URL` $opal_fs_path
 
-
     opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination $OPAL_DEMO_PROJECT --path $opal_file_path  --tables $OPAL_DEMO_TABLE --separator , --type Participant --valueType decimal
 
     cd ..
-    rm -rf temp
+    rm -rf opal-config-temp
 
     touch /finished_local_customisation.txt
