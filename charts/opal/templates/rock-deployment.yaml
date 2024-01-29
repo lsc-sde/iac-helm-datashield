@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  name: rock-deployment
   labels:
-    io.kompose.service: rock
-  name: rock
+    name: rock-deployment
+    environment: {{ .Values.environment }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: rock
+      app: rock-deployment
   template:
     metadata:
       annotations: {}
       labels:
-        io.kompose.service: rock
+        app: rock-deployment
+        environment: {{ .Values.environment }}
     spec:
       containers:
         - image: datashield/rock-base:latest

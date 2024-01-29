@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  name: mongo-deployment
   labels:
-    io.kompose.service: mongo
-  name: mongo
+    name: mongo-deployment
+    environment: {{ .Values.environment }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: mongo
+      app: mongo-deployment
   strategy: {}
   template:
     metadata:
-      annotations: {}
       labels:
-        io.kompose.service: mongo
+        app: mongo-deployment
+        environment: {{ .Values.environment }}
     spec:
       containers:
         - image: mongo:6.0

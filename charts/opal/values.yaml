@@ -1,9 +1,11 @@
 
+environment: dev
+
 opal:
   env_vars:
     OPAL_ADMINISTRATOR_PASSWORD: P@55w0rd
     CSRF_ALLOWED: datashield1.liv.ac.uk,landertre-dev.org 
-    org_obiba_opal_https_port: "-1"
+    org_obiba_opal_https_port: '"-1"'
   demo:
     OPAL_DEMO_USER_NAME: bob
     OPAL_DEMO_USER_PASSWORD: P@55w0rd1
@@ -14,6 +16,6 @@ opal:
 
 mysql:
   env_vars:
-    MYSQL_DATABASE: dsdb
-    MYSQL_PASSWORD: P@55w0rd
-    MYSQL_USER: dsuser
+    MYSQLDATA_DATABASE: dsdb
+    MYSQLDATA_PASSWORD: P@55w0rd
+    MYSQLDATA_USER: dsuser

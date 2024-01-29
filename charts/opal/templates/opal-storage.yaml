@@ -1,9 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    io.kompose.service: opal-storage-1
   name: opal-storage-claim-1
+  labels:
+    name: opal-storage-claim-1
+    environment: {{ .Values.environment }}
 spec:
   accessModes:
     - ReadWriteOnce

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  name: opal-deployment
   labels:
-    io.kompose.service: opal
-  name: opal
+    name: opal-deployment
+    environment: {{ .Values.environment }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: opal
+      app: opal-deployment
   strategy:
     type: Recreate
   template:
     metadata:
-      annotations:
       labels:
-        io.kompose.service: opal
+        app: opal-deployment
+        environment: {{ .Values.environment }}
     spec:
       containers:
         - image: obiba/opal:latest
@@ -37,13 +37,13 @@ spec:
             - name: OPAL_ADMINISTRATOR_PASSWORD
               value: {{ .Values.opal.env_vars.OPAL_ADMINISTRATOR_PASSWORD }}
             - name: ROCK_HOSTS
-              value: rock:8085
+              value: rock-service:8085
             - name: CSRF_ALLOWED
               value: {{ .Values.opal.env_vars.CSRF_ALLOWED }} 
             - name: org.obiba.opal.https.port
-              value: {{ .Values.opal.env_vars_org_obiba_opal_https_port }}
+              value: {{ .Values.opal.env_vars.org_obiba_opal_https_port }}
             - name: dummy
-              value: dummy8
+              value: dummy12
           ports:
             - containerPort: 8080
           resources: {}

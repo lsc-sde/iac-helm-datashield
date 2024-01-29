@@ -1,21 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  name: mysqldata-deployment
   labels:
-    io.kompose.service: mysqldata
-  name: mysqldata
+    name: mysqldata-deployment
+    environment: {{ .Values.environment }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: mysqldata
+      app: mysqldata-deployment
   strategy: {}
   template:
     metadata:
       annotations: {}
       labels:
-        io.kompose.service: mysqldata
+        app: mysqldata-deployment
+        environment: {{ .Values.environment }}
     spec:
       containers:
         - env:
