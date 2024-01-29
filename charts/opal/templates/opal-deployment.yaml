@@ -27,31 +27,21 @@ spec:
             - name: MONGO_PORT
               value: "27017"
             - name: MYSQLDATA_DATABASE
-              value: dsdb
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_DATABASE }}
             - name: MYSQLDATA_HOST
               value: mysqldata-service
             - name: MYSQLDATA_PASSWORD
-              value: P@55w0rd
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_PASSWORD }}
             - name: MYSQLDATA_USER
-              value: dsuser
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_USER }}
             - name: OPAL_ADMINISTRATOR_PASSWORD
               value: {{ .Values.opal.env_vars.OPAL_ADMINISTRATOR_PASSWORD }}
             - name: ROCK_HOSTS
               value: rock:8085
             - name: CSRF_ALLOWED
-              value: datashield1.liv.ac.uk,landertre-dev.org 
+              value: {{ .Values.opal.env_vars.CSRF_ALLOWED }} 
             - name: org.obiba.opal.https.port
-              value: "-1"
-            - name: OPAL_DEMO_USER_NAME
-              value: {{ .Values.opal.env_vars.OPAL_DEMO_USER_NAME }}
-            - name: OPAL_DEMO_USER_PASSWORD
-              value: {{ .Values.opal.env_vars.OPAL_DEMO_USER_PASSWORD }}
-            - name: OPAL_DEMO_PROJECT
-              value: {{ .Values.opal.env_vars.OPAL_DEMO_PROJECT }}
-            - name: OPAL_DEMO_TABLE
-              value: {{ .Values.opal.env_vars.OPAL_DEMO_TABLE }}
-            - name: OPAL_DEMO_SOURCE_DATA_URL
-              value: {{ .Values.opal.env_vars.OPAL_DEMO_SOURCE_DATA_URL }}
+              value: {{ .Values.opal.env_vars_org_obiba_opal_https_port }}
             - name: dummy
               value: dummy8
           ports:

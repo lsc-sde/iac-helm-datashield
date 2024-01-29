@@ -20,11 +20,11 @@ spec:
       containers:
         - env:
             - name: MYSQL_DATABASE
-              value: dsdb
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_DATABASE }}
             - name: MYSQL_PASSWORD
-              value: P@55w0rd
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_PASSWORD }}
             - name: MYSQL_USER
-              value: dsuser
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_USER }}
             - name: MYSQL_RANDOM_ROOT_PASSWORD
               value: "TRUE"
           image: mysql

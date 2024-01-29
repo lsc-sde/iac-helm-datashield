@@ -7,6 +7,8 @@ data:
     #!/usr/bin/env bash
 
     # This script is run by the opal container on startup.
+    # There are some values which are set as ENV VARS in the container which are set in opal-deployment.yaml
+    # The rest come from the values.yaml file.
 
     # https://opaldoc.obiba.org/en/latest/python-user-guide/index.html
 
@@ -30,24 +32,24 @@ data:
     opal system --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --version
 
     # Add the NORMAL DEMO_USER as defined in the values.yaml
-    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name $OPAL_DEMO_USER_NAME --upassword $OPAL_DEMO_USER_PASSWORD
+    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.OPAL_DEMO_USER_NAME }} --upassword {{ .Values.opal.demo.OPAL_DEMO_USER_PASSWORD }}
 
     # Add a project
-    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name $OPAL_DEMO_PROJECT --database mongodb
+    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.OPAL_DEMO_PROJECT }} --database mongodb
 
     # Add the CNSIM1 data to the project
     cd /tmp
     mkdir opal-config-temp
     cd opal-config-temp
     #wget -O $filename https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM1.csv
-    wget $OPAL_DEMO_SOURCE_DATA_URL
+    wget {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}
 
     opal_fs_path="/home/administrator"
-    opal_file_path="$opal_fs_path/`basename $OPAL_DEMO_SOURCE_DATA_URL`"
+    opal_file_path="$opal_fs_path/`basename {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}`"
 
-    opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename $OPAL_DEMO_SOURCE_DATA_URL` $opal_fs_path
+    opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}` $opal_fs_path
 
-    opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination $OPAL_DEMO_PROJECT --path $opal_file_path  --tables $OPAL_DEMO_TABLE --separator , --type Participant --valueType decimal
+    opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination {{ .Values.opal.demo.OPAL_DEMO_PROJECT }} --path $opal_file_path  --tables {{ .Values.opal.demo.OPAL_DEMO_TABLE }} --separator , --type Participant --valueType decimal
 
     cd ..
     rm -rf opal-config-temp
