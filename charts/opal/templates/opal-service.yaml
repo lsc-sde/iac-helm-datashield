@@ -8,17 +8,20 @@ metadata:
     context: {{ .Values.context }}
 spec:
   {{- if eq .Values.context "minikube"}}
-  #type: LoadBalancer
   type: NodePort
   ports:
     - name: http
       port: 80    
       targetPort: 8080
-      nodePort: 30080
+      nodePort: {{ .Values.minikube.node_port_http }}
     - name: https
       port: 443
       targetPort: 8443
-      nodePort: 30443
+      nodePort: {{ .Values.minikube.node_port_https }}
+  {{- else if eq .Values.context "AKS"}}
+  #
+  # PLACEHOLDER FOR AKS Service.
+  #
   {{- end}}
   selector:
     app: opal-deployment

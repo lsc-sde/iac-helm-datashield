@@ -1,8 +1,13 @@
-# Flag to handle the type of infrastructure running on. Currently handles minikube, but will have to be extended to aks.
-context: minikube
-
 # Just a label at present
 environment: dev
+
+# Flag to handle the type of infrastructure running on. Currently handles minikube, with placeholders for AKS.
+context: minikube
+
+# Additional context-specific settings
+minikube:
+  node_port_http: 30080
+  node_port_https: 30443
 
 # Opal configuration
 opal:
