@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rock-deployment
+  name: {{ .Values.rock.rock1.name }}-deployment
   labels:
-    name: rock-deployment
+    name: {{ .Values.rock.rock1.name }}-deployment
     environment: {{ .Values.environment }}
     context: {{ .Values.context }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rock-deployment
+      app: {{ .Values.rock.rock1.name }}-deployment
   template:
     metadata:
       labels:
-        app: rock-deployment
+        app: {{ .Values.rock.rock1.name }}-deployment
         environment: {{ .Values.environment }}
         context: {{ .Values.context }}
     spec:
@@ -22,5 +22,34 @@ spec:
         - name: rock 
           image: datashield/rock-base:latest
           ports:
-            - containerPort: 8085
+            - containerPort: {{ .Values.rock.rock1.port }}
       restartPolicy: Always
+---
+{{- if .Values.rock.rock2.build}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.rock.rock2.name }}-deployment
+  labels:
+    name: {{ .Values.rock.rock2.name }}-deployment
+    environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.rock.rock2.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.rock.rock2.name }}-deployment
+        environment: {{ .Values.environment }}
+        context: {{ .Values.context }}
+    spec:
+      containers:
+        - name: rock 
+          image: datashield/rock-base:latest
+          ports:
+            - containerPort: {{ .Values.rock.rock2.port }}
+      restartPolicy: Always
+{{- end}}

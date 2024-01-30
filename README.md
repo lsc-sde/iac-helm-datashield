@@ -32,8 +32,12 @@ Services - built in k8s loadbalancer?
 
 ## Dev work
 
-- spin up two instances side by side
+- spin up two instances side by side (waiting for new subdomain to be set up)
 - finish templating the settings
 - auto set up DS profile (needs a manual click now)
 - should standard stuff like the DBs be in their own charts?
 - Not 100% sure about the scope of the networking - is e.g. mysqldata-service only available in the deployemnt? Or the namespace? Other? Do I need to add these networking definitions (internal hostnames and ports) to the values file?
+
+### Auto R server scaling
+
+Opal can auto add new rock instances. I am just starting to work through this, but as an initial exploration I am adding all potential rock server URLs to the `ROCK_HOSTS` env_var in opal, this means when a new rock server is added it will be picked up by opal. I am not sure how to do this in a scalable way, but it is a start.

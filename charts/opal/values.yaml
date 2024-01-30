@@ -28,3 +28,15 @@ mysql:
     MYSQLDATA_DATABASE: dsdb
     MYSQLDATA_PASSWORD: P@55w0rd
     MYSQLDATA_USER: dsuser
+
+# Rock configuration
+rock:
+  rock1:
+    name: rock-1
+    hostname: rock-1-service
+    port: 8085
+  rock2:
+    build: false
+    name: rock-2
+    hostname: rock-2-service
+    port: 8085
