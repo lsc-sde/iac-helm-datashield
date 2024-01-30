@@ -14,13 +14,15 @@ spec:
   strategy: {}
   template:
     metadata:
-      annotations: {}
       labels:
         app: mysqldata-deployment
         environment: {{ .Values.environment }}
+        context: {{ .Values.context }}
     spec:
       containers:
-        - env:
+        - name: mysqldata
+          image: mysql
+          env:
             - name: MYSQL_DATABASE
               value: {{ .Values.mysql.env_vars.MYSQLDATA_DATABASE }}
             - name: MYSQL_PASSWORD
@@ -29,14 +31,11 @@ spec:
               value: {{ .Values.mysql.env_vars.MYSQLDATA_USER }}
             - name: MYSQL_RANDOM_ROOT_PASSWORD
               value: "TRUE"
-          image: mysql
-          name: mysqldata
           ports:
             - containerPort: 3306
           volumeMounts:
           - name: mysql-storage
             mountPath: /var/lib/mysql
-          resources: {}
       restartPolicy: Always
       volumes:
       - name: mysql-storage

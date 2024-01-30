@@ -17,11 +17,11 @@ spec:
       labels:
         app: mongo-deployment
         environment: {{ .Values.environment }}
+        context: {{ .Values.context }}
     spec:
       containers:
-        - image: mongo:6.0
-          name: mongo
-          resources: {}
+        - name: mongo
+          image: mongo:6.0
           volumeMounts:
           - name: "mongo-data-dir"
             mountPath: "/data/db"

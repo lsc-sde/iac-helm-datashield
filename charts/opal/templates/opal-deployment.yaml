@@ -18,10 +18,11 @@ spec:
       labels:
         app: opal-deployment
         environment: {{ .Values.environment }}
+        context: {{ .Values.context }}
     spec:
       containers:
-        - image: obiba/opal:latest
-          name: opal
+        - name: opal
+          image: obiba/opal:latest
           env:
             - name: MONGO_HOST
               value: mongo-service
@@ -47,7 +48,6 @@ spec:
               value: dummy12
           ports:
             - containerPort: 8080
-          resources: {}
           volumeMounts:
             - name: opal-storage
               mountPath: /srv  

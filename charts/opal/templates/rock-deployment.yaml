@@ -13,15 +13,14 @@ spec:
       app: rock-deployment
   template:
     metadata:
-      annotations: {}
       labels:
         app: rock-deployment
         environment: {{ .Values.environment }}
+        context: {{ .Values.context }}
     spec:
       containers:
-        - image: datashield/rock-base:latest
-          name: rock
+        - name: rock 
+          image: datashield/rock-base:latest
           ports:
             - containerPort: 8085
-          resources: {}
       restartPolicy: Always
