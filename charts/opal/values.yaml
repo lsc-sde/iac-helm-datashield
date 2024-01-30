@@ -1,6 +1,10 @@
+# Flag to handle the type of infrastructure running on. Currently handles minikube, but will have to be extended to aks.
+context: minikube
 
+# Just a label at present
 environment: dev
 
+# Opal configuration
 opal:
   env_vars:
     OPAL_ADMINISTRATOR_PASSWORD: P@55w0rd
@@ -13,7 +17,7 @@ opal:
     OPAL_DEMO_TABLE: CNSIM1
     OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM1.csv
   
-
+# MySQL configuration
 mysql:
   env_vars:
     MYSQLDATA_DATABASE: dsdb

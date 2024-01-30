@@ -5,6 +5,7 @@ metadata:
   labels:
     name: rock-deployment
     environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
 spec:
   replicas: 1
   selector:

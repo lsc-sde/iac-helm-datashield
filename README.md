@@ -2,7 +2,7 @@
 
 ## Background
 
-This is an attempt to get DataSHIELD running in K8s. It is being developed across both minikube and the LSC Azure based k8s instance, so there are a few (!) incompatibilities that need to be worked through.
+This is an attempt to get DataSHIELD running in k8s. It is being developed across both minikube and the LSC Azure based k8s instance, so there are a few (!) incompatibilities that need to be worked through.
 
 ## Installation
 
@@ -14,9 +14,7 @@ Run ``uninstall_opal_stack.sh`` to uninstall it. Note PVs stay and will be recon
 
 ### Local environments
 
-It would be nice to capture the differences automatically via environment variables or config files, but I am not there yet, so some of the differences are highlighted here.
-
-If we want to add microk8s later then this might be useful.
+Using the `context` flag in the `values.yaml` file to switch between local and azure environments. Currently rolling out the `minikube` context. `AKS` will come later, and maybe `microk8s` if we want to go down that route.
 
 #### Minikube
 
@@ -36,7 +34,7 @@ Services - built in k8s loadbalancer?
 
 - tidy up code base
 - spin up two instances side by side
-- variables & settings in values file and reference via   MYSQL_PASSWORD: {{ .Values.mysql_password }}
+- finish templating the settings
 - auto set up DS profile (needs a manual click now)
-- auto set up a DS user which is not admin
-- auto load some data/project into opal/DS
+- should standard stuff like the DBs be in their own charts?
+- Not 100% sure about the scope of the networking - is e.g. mysqldata-service only available in the deployemnt? Or the namespace? Other? Do I need to add these networking definitions (internal hostnames and ports) to the values file?

@@ -5,6 +5,7 @@ metadata:
   labels:
     name: rock-service
     environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
 spec:
   ports:
     - name: tcp

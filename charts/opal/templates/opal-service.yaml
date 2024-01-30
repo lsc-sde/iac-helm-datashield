@@ -5,7 +5,9 @@ metadata:
   labels:
     name: opal-service
     environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
 spec:
+  {{- if eq .Values.context "minikube"}}
   #type: LoadBalancer
   type: NodePort
   ports:
@@ -17,5 +19,6 @@ spec:
       port: 443
       targetPort: 8443
       nodePort: 30443
+  {{- end}}
   selector:
     app: opal-deployment

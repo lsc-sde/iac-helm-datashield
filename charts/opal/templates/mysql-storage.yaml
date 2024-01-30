@@ -5,6 +5,7 @@ metadata:
   labels:
     name: mysql-storage-1
     environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
 spec:
   accessModes:
     - ReadWriteOnce
