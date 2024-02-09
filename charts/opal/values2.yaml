@@ -1,0 +1,48 @@
+# Just a label at present
+environment: dev
+
+# Flag to handle the type of infrastructure running on. Currently handles minikube, with placeholders for AKS.
+context: minikube
+
+# Additional context-specific settings
+minikube:
+  node_port_http: 30081
+  node_port_https: 30444
+  mongo_PV_path: "/k8s/pvs/mongo2"
+  mongo_PV_name: mongo-pv-2
+  mysql_PV_path: "/k8s/pvs/mysql2"
+  mysql_PV_name: mysql-pv-2
+  opal_PV_path: "/k8s/pvs/opal2"
+  opal_PV_name: opal-pv-2
+
+# Opal configuration
+opal:
+  env_vars:
+    OPAL_ADMINISTRATOR_PASSWORD: P@55w0rd
+    CSRF_ALLOWED: a-datashield.liv.ac.uk,b-datashield.liv.ac.uk,datashield1.liv.ac.uk,landertre-dev.org 
+    org_obiba_opal_https_port: '"-1"'
+  demo:
+    OPAL_DEMO_USER_NAME: bob
+    OPAL_DEMO_USER_PASSWORD: P@55w0rd1
+    OPAL_DEMO_PROJECT: DEMO
+    OPAL_DEMO_TABLE: CNSIM2
+    OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM2.csv
+  
+# MySQL configuration
+mysql:
+  env_vars:
+    MYSQLDATA_DATABASE: dsdb
+    MYSQLDATA_PASSWORD: P@55w0rd
+    MYSQLDATA_USER: dsuser
+
+# Rock configuration
+rock:
+  rock1:
+    name: rock-1
+    hostname: rock-1-service
+    port: 8085
+  rock2:
+    build: false
+    name: rock-2
+    hostname: rock-2-service
+    port: 8085
