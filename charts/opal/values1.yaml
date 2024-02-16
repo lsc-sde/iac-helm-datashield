@@ -18,15 +18,19 @@ minikube:
 # Opal configuration
 opal:
   env_vars:
+    APP_URL: a-datashield.liv.ac.uk
     OPAL_ADMINISTRATOR_PASSWORD: P@55w0rd
-    CSRF_ALLOWED: a-datashield.liv.ac.uk,b-datashield.liv.ac.uk,datashield1.liv.ac.uk,landertre-dev.org 
+    CSRF_ALLOWED: a-datashield.liv.ac.uk
     org_obiba_opal_https_port: '"-1"'
   demo:
     OPAL_DEMO_USER_NAME: bob
     OPAL_DEMO_USER_PASSWORD: P@55w0rd1
     OPAL_DEMO_PROJECT: DEMO
     OPAL_DEMO_TABLE: CNSIM1
-    OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/datashield/dsBaseClient/master/tests/testthat/data_files/CNSIM/CNSIM1.csv
+    OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/CNSIM/CNSIM1.csv
+    OPAL_COHORT_PROJECT: COHORT
+    OPAL_COHORT_TABLE: conditions1
+    OPAL_COHORT_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/synthea/conditionsa.csv
   
 # MySQL configuration
 mysql:

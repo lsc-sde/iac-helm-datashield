@@ -22,7 +22,7 @@ Storage - I have three Physical Volumes (one each for opal, mysql, mongodb) whic
 
 The storage seems to be scoped to the cluster, not to the namespace, so I have to explicitly name the PVs in the storage files and flow that through to the PVCs.
 
-Services - opal is the only service which needs to be accessible outside of the k8s cluster. I've specified nodeports here which are then picked up by a nginx reverse proxy sitting on the VM that minikube is running on. This is obviously clunky and I am not sure how to scale out. The internal services are using the internal NAMESPACEd DNS names e.g. `opal-service.opal1`. Namespaces seem a bit overkill for this.
+Services - opal is the only service which needs to be accessible outside of the k8s cluster. I've specified nodeports here which are then picked up by a nginx reverse proxy sitting on the VM that minikube is running on. This is obviously clunky and I am not sure how to scale out. The internal services are using the internal NAMESPACEd DNS names e.g. `opal-service.opal1`.
 
 #### Azure k8s
 
@@ -32,13 +32,20 @@ Storage - azure backed storage.
 
 Services - built in k8s loadbalancer?
 
+## Data
+
+Using CNSIM from the dsBaseClient package. This is used extensively in DataSHIELD testing and training material. Also using some sythea data - specifically a conditions table which I have moved the patient ID to the first column and split into two files. These are grabbed at deployment time from a public github repoand loaded in as defined in the configmap.
+
+## Client side R functions
+
+In the top level client folder is an R script which gives a basic set of examples of how to use the DataSHIELD client.
+
 ## Dev work
 
 - spin up two instances side by side - this almost works, but the opal instances seem to crash when the second one comes up.
 - finish templating the settings
 - auto set up DS profile (needs a manual click now)
 - should standard stuff like the DBs be in their own charts?
-- Not 100% sure about the scope of the networking - is e.g. mysqldata-service only available in the deployemnt? Or the namespace? Other? Do I need to add these networking definitions (internal hostnames and ports) to the values file?
 
 ### Auto R server scaling
 

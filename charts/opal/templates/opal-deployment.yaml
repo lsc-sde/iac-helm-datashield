@@ -39,13 +39,13 @@ spec:
             - name: OPAL_ADMINISTRATOR_PASSWORD
               value: {{ .Values.opal.env_vars.OPAL_ADMINISTRATOR_PASSWORD }}
             - name: ROCK_HOSTS
-              value: {{ .Values.rock.rock1.hostname }}:{{ .Values.rock.rock1.port }},{{ .Values.rock.rock2.hostname }}:{{ .Values.rock.rock2.port }}
+              value: {{ .Values.rock.rock1.hostname }}.{{ .Release.Namespace }}:{{ .Values.rock.rock1.port }},{{ .Values.rock.rock2.hostname }}.{{ .Release.Namespace }}:{{ .Values.rock.rock2.port }}
             - name: CSRF_ALLOWED
               value: {{ .Values.opal.env_vars.CSRF_ALLOWED }} 
             - name: org.obiba.opal.https.port
               value: {{ .Values.opal.env_vars.org_obiba_opal_https_port }}
             - name: dummy
-              value: dummy3
+              value: dummy5
           ports:
             - containerPort: 8080
           volumeMounts:
