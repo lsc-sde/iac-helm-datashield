@@ -8,12 +8,18 @@ context: minikube
 minikube:
   node_port_http: 30080
   node_port_https: 30443
+  mongo_PV_path: "/k8s/pvs/mongo1"
+  mongo_PV_name: mongo-pv-1
+  mysql_PV_path: "/k8s/pvs/mysql1"
+  mysql_PV_name: mysql-pv-1
+  opal_PV_path: "/k8s/pvs/opal1"
+  opal_PV_name: opal-pv-1
 
 # Opal configuration
 opal:
   env_vars:
     OPAL_ADMINISTRATOR_PASSWORD: P@55w0rd
-    CSRF_ALLOWED: datashield1.liv.ac.uk,landertre-dev.org 
+    CSRF_ALLOWED: a-datashield.liv.ac.uk,b-datashield.liv.ac.uk,datashield1.liv.ac.uk,landertre-dev.org 
     org_obiba_opal_https_port: '"-1"'
   demo:
     OPAL_DEMO_USER_NAME: bob

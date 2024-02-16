@@ -25,13 +25,13 @@ spec:
           image: obiba/opal:latest
           env:
             - name: MONGO_HOST
-              value: mongo-service
+              value: mongo-service.{{ .Release.Namespace }}
             - name: MONGO_PORT
               value: "27017"
             - name: MYSQLDATA_DATABASE
               value: {{ .Values.mysql.env_vars.MYSQLDATA_DATABASE }}
             - name: MYSQLDATA_HOST
-              value: mysqldata-service
+              value: mysqldata-service.{{ .Release.Namespace }}
             - name: MYSQLDATA_PASSWORD
               value: {{ .Values.mysql.env_vars.MYSQLDATA_PASSWORD }}
             - name: MYSQLDATA_USER
@@ -40,13 +40,12 @@ spec:
               value: {{ .Values.opal.env_vars.OPAL_ADMINISTRATOR_PASSWORD }}
             - name: ROCK_HOSTS
               value: {{ .Values.rock.rock1.hostname }}:{{ .Values.rock.rock1.port }},{{ .Values.rock.rock2.hostname }}:{{ .Values.rock.rock2.port }}
-              #value: rock-service:8085
             - name: CSRF_ALLOWED
               value: {{ .Values.opal.env_vars.CSRF_ALLOWED }} 
             - name: org.obiba.opal.https.port
               value: {{ .Values.opal.env_vars.org_obiba_opal_https_port }}
             - name: dummy
-              value: dummy1
+              value: dummy3
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -62,7 +61,7 @@ spec:
       volumes:
       - name: opal-storage
         persistentVolumeClaim:
-          claimName: opal-storage-claim-1
+          claimName: opal-storage-claim
       - name: opal-demo-customisations
         configMap:
           name: opal-demo-configmap
