@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    app: {{ include "datashield.mongodb.name" . }}
+  name: {{ include "datashield.mongodb.name" . }}  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "datashield.mongodb.name" . }}  
+  strategy: {}
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        app: {{ include "datashield.mongodb.name" . }}  
+    spec:
+      containers:
+        - name: mongo
+          image: {{ .Values.mongodb.image }}
+          {{ if .Values.mongodb.resources }}
+          resources: 
+            {{- .Values.mongodb.resources | nindent 12}}
+          {{ end }}
+          volumeMounts:
+          - name: "mongo-data-dir"
+            mountPath: "/data/db"
+      volumes:
+      - name: "mongo-data-dir"
+        persistentVolumeClaim:
+          claimName: "mongo-storage-claim"

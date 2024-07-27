@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.rock.rock1.name }}-service
+  labels:
+    name: {{ .Values.rock.rock1.name }}-service
+    environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
+spec:
+  ports:
+    - name: tcp
+      port: {{ .Values.rock.rock1.port }}
+      targetPort: {{ .Values.rock.rock1.port }}
+  selector:
+    app: {{ .Values.rock.rock1.name }}-deployment
+---
+{{- if .Values.rock.rock2.build}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.rock.rock2.name }}-service
+  labels:
+    name: {{ .Values.rock.rock2.name }}-service
+    environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
+spec:
+  ports:
+    - name: tcp
+      port: {{ .Values.rock.rock2.port }}
+      targetPort: {{ .Values.rock.rock2.port }}
+  selector:
+    app: {{ .Values.rock.rock2.name }}-deployment
+{{- end}}

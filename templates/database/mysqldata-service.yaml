@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldata-service
+  labels:
+    name: mysqldata-service
+    environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
+spec:
+  ports:
+    - name: tcp
+      port: 3306    
+      targetPort: 3306
+  selector:
+    app: mysqldata-deployment

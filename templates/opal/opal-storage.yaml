@@ -1,0 +1,47 @@
+{{- if eq .Values.context "minikube"}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.minikube.opal_PV_name}}
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: {{ .Values.minikube.opal_PV_path}}
+{{- else if eq .Values.context "AKS"}}
+  #
+  # PLACEHOLDER FOR AKS PersistentVOLUME
+  #
+{{- end}}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opal-storage-claim
+  labels:
+    name: opal-storage-claim
+    environment: {{ .Values.environment }}
+    context: {{ .Values.context }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  {{- if eq .Values.context "minikube"}}
+  volumeName: {{ .Values.minikube.opal_PV_name}}
+  {{- else if eq .Values.context "AKS"}}
+  #
+  # PLACEHOLDER FOR AKS PersistentVOLUME
+  #
+  {{- end}}
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  storageClassName: manual

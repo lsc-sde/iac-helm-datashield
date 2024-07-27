@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    app: {{ include "datashield.agate.name" . }}
+  name: {{ include "datashield.agate.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "datashield.agate.name" . }}
+  template:
+    metadata:
+      annotations: {}
+      labels:
+        app: {{ include "datashield.agate.name" . }}
+    spec:
+      containers:
+        - name: agate
+          image: {{ .Values.agate.image }}
+          {{ if .Values.agate.resources }}
+          resources: 
+            {{- .Values.agate.resources | nindent 12}}
+          {{ end }}
+          env:
+            - name: AGATE_ADMINISTRATOR_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: {{ include "datashield.agate.administrator_password.secret" . }}
+                  key: {{ .Values.agate.administrator_password.key}}
+            - name: MONGO_HOST
+              value: {{ include "datashield.mongodb.name" . }}
+            - name: MONGO_PORT
+              value: {{ .Values.mongodb.port | quote }}
+            - name: RECAPTCHA_SITE_KEY
+              value: http://opal:8080
+            - name: RECAPTCHA_SECRET_KEY
+              value: http://agate:8081
+      restartPolicy: Always

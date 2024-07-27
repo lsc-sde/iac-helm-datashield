@@ -1,0 +1,34 @@
+agate:
+  image: obiba/agate:2.8
+  administrator_password:
+    secret: ""
+    key: "agate-administrator-password"
+
+mysqldb:
+  administrator_password:
+    secret: ""
+    key: "mysql-administrator-password"
+
+mongodb:
+  image: mongo:6.0
+  port: "27017"
+
+mica:
+
+opal:
+  replicaCount: 1
+  
+  image: 
+    repository: obiba
+    name: opal
+    tag: latest
+    pullPolicy: IfNotPresent
+  administrator_password:
+    secret: ""
+    key: "opal-administrator-password"
+  service:
+    type: ClusterIP
+    port: 80
+
+rock:
+

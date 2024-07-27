@@ -5,6 +5,31 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "datashield.agate.name" -}}
+{{- printf "%s-agate" .Release.Name }}
+{{- end }}
+
+
+{{- define "datashield.mongodb.name" -}}
+{{- printf "%s-mongo" .Release.Name }}
+{{- end }}
+
+{{- define "datashield.mysqldb.name" -}}
+{{- printf "%s-mysqldb" .Release.Name }}
+{{- end }}
+
+{{- define "datashield.mica.name" -}}
+{{- printf "%s-mica" .Release.Name }}
+{{- end }}
+
+{{- define "datashield.opal.name" -}}
+{{- printf "%s-opal" .Release.Name }}
+{{- end }}
+
+{{- define "datashield.rock.name" -}}
+{{- printf "%s-rock" .Release.Name }}
+{{- end }}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -58,5 +83,42 @@ Create the name of the service account to use
 {{- default (include "datashield.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+
+{{/*
+Secrets
+*/}}
+
+{{- define "datashield.agate.administrator_password.secret" -}}
+{{- if eq .Values.agate.administrator_password.secret "" }}
+{{- printf "%s" .Release.Name }}
+{{- else }}
+{{- printf "%s" .Values.agate.administrator_password.secret }}
+{{- end }}
+{{- end }}
+
+{{- define "datashield.opal.administrator_password.secret" -}}
+{{- if eq .Values.opal.administrator_password.secret "" }}
+{{- printf "%s" .Release.Name }}
+{{- else }}
+{{- printf "%s" .Values.opal.administrator_password.secret }}
+{{- end }}
+{{- end }}
+
+{{- define "datashield.mysqldb.administrator_password.secret" -}}
+{{- if eq .Values.mysqldb.administrator_password.secret "" }}
+{{- printf "%s" .Release.Name }}
+{{- else }}
+{{- printf "%s" .Values.mysqldb.administrator_password.secret }}
+{{- end }}
+{{- end }}
+
+{{- define "datashield.agate.administrator_password.secret" -}}
+{{- if eq .Values.agate.administrator_password.secret "" }}
+{{- printf "%s" .Release.Name }}
+{{- else }}
+{{- printf "%s" .Values.agate.administrator_password.secret }}
 {{- end }}
 {{- end }}

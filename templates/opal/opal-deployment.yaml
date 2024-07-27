@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opal-deployment
+  labels:
+    name: opal-deployment
+    app: opal-deployment
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.opal.replicaCount }}
+  selector:
+    matchLabels:
+      app: opal-deployment
+      release: {{ .Release.Name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: opal-deployment
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: opal
+          image: obiba/opal:latest
+          image:  {{ .Values.opal.image.repository }}/{{ .Values.opal.image.name }}:{{ .Values.image.opal.tag }}
+          imagePullPolicy: {{ .Values.opal.image.pullPolicy }}
+          env:
+            - name: MONGO_HOST
+              value: mongo-service.{{ .Release.Namespace }}
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MYSQLDATA_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.opal.administrator_password.secret" . }}
+                  key: {{ .Values.opal.administrator_password.key}}
+            - name: MYSQLDATA_HOST
+              value: mysqldata-service.{{ .Release.Namespace }}
+            - name: MYSQLDATA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.mysqldb.administrator_password.secret" . }}
+                  key: {{ .Values.mysqldb.administrator_password.key}}
+            - name: MYSQLDATA_USER
+              value: {{ .Values.mysql.env_vars.MYSQLDATA_USER }}
+            - name: OPAL_ADMINISTRATOR_PASSWORD
+              value: {{ .Values.opal.env_vars.OPAL_ADMINISTRATOR_PASSWORD }}
+            - name: ROCK_HOSTS
+              value: {{ .Values.rock.rock1.hostname }}.{{ .Release.Namespace }}:{{ .Values.rock.rock1.port }},{{ .Values.rock.rock2.hostname }}.{{ .Release.Namespace }}:{{ .Values.rock.rock2.port }}
+            - name: CSRF_ALLOWED
+              value: {{ .Values.opal.env_vars.CSRF_ALLOWED }} 
+            - name: org.obiba.opal.https.port
+              value: {{ .Values.opal.env_vars.org_obiba_opal_https_port }}
+            - name: dummy
+              value: dummy5
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: opal-storage
+              mountPath: /srv  
+            - name: opal-demo-customisations
+              mountPath: /demo-customisations
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash", "-c", "/demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1" ]
+      restartPolicy: Always
+      volumes:
+      - name: opal-storage
+        persistentVolumeClaim:
+          claimName: opal-storage-claim
+      - name: opal-demo-customisations
+        configMap:
+          name: opal-demo-configmap
+          defaultMode: 0777
