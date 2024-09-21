@@ -1,34 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysqldata-deployment
+  annotations: {}
   labels:
-    name: mysqldata-deployment
-    environment: {{ .Values.environment }}
-    context: {{ .Values.context }}
+    app: {{ include "datashield.mysqldb.name" . }}
+  name: {{ include "datashield.mysqldb.name" . }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysqldata-deployment
+      app: {{ include "datashield.mysqldb.name" . }}
   strategy: {}
   template:
     metadata:
       labels:
-        app: mysqldata-deployment
-        environment: {{ .Values.environment }}
-        context: {{ .Values.context }}
+        app: {{ include "datashield.mysqldb.name" . }}
     spec:
       containers:
         - name: mysqldata
-          image: mysql
+          image: {{ .Values.mysqldb.image }}
           env:
             - name: MYSQL_DATABASE
-              value: {{ .Values.mysql.env_vars.MYSQLDATA_DATABASE }}
+              value: {{ .Values.mysqldb.env.MYSQLDATA_DATABASE }}
             - name: MYSQL_PASSWORD
-              value: {{ .Values.mysql.env_vars.MYSQLDATA_PASSWORD }}
+              value: {{ .Values.mysqldb.env.MYSQLDATA_PASSWORD }}
             - name: MYSQL_USER
-              value: {{ .Values.mysql.env_vars.MYSQLDATA_USER }}
+              value: {{ .Values.mysqldb.env.MYSQLDATA_USER }}
             - name: MYSQL_RANDOM_ROOT_PASSWORD
               value: "TRUE"
           ports:

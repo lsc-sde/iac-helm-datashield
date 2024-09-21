@@ -5,15 +5,26 @@ agate:
     key: "agate-administrator-password"
 
 mysqldb:
+  image: mysql
   administrator_password:
     secret: ""
     key: "mysql-administrator-password"
+  env:
+    MYSQLDATA_DATABASE: "dsdb"
+    MYSQLDATA_USER: "dsdb_user"
+    MYSQLDATA_PASSWORD: "p@55w0rd"
+    # MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+  pvc:
+    storage: 1Gi
 
 mongodb:
   image: mongo:6.0
   port: "27017"
+  pvc:
+    storageClassName: default
+    storage: 1Gi
 
-mica:
+mica: {}
 
 opal:
   replicaCount: 1
