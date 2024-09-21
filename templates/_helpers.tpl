@@ -114,11 +114,3 @@ Secrets
 {{- printf "%s" .Values.mysqldb.administrator_password.secret }}
 {{- end }}
 {{- end }}
-
-{{- define "datashield.agate.administrator_password.secret" -}}
-{{- if eq .Values.agate.administrator_password.secret "" }}
-{{- printf "%s" .Release.Name }}
-{{- else }}
-{{- printf "%s" .Values.agate.administrator_password.secret }}
-{{- end }}
-{{- end }}

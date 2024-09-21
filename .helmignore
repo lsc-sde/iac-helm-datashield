@@ -24,3 +24,6 @@
 test/
 initdb/
 scripts/
+
+logs/
+*.code-workspace
