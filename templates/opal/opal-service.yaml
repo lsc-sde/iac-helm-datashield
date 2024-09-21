@@ -7,8 +7,11 @@ metadata:
 spec:
   type: {{ .Values.opal.service.type }}
   ports:
-    - name: opal
+    - name: http
       port: 80 # {{ .Values.opal.service.port }}
       targetPort: 8080
+    # - name: https
+    #   port:  443
+    #   targetPort: 8443
   selector:
     app: {{ include "datashield.opal.name" . }}

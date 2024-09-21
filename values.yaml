@@ -28,8 +28,8 @@ opal:
   pullPolicy: IfNotPresent
   env:
     OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
-    CSRF_ALLOWED: "192.168.0.23,*"
-    ORG_OBIBA_OPAL_HTTPS_PORT: "443"
+    CSRF_ALLOWED: "ingress.local"
+    ORG_OBIBA_OPAL_HTTPS_PORT: "-1"
   service:
     type: ClusterIP
     port: 80

@@ -41,12 +41,15 @@ spec:
               value: {{ .Values.opal.env.CSRF_ALLOWED }}
             - name: org.obiba.opal.https.port
               value: {{ .Values.opal.env.ORG_OBIBA_OPAL_HTTPS_PORT | quote }}
-            # - name: org.obiba.opal.server.context-path
-            #   value: "/opal"
+            - name: org.obiba.opal.server.context-path
+              value: "/opal"
             - name: dummy
               value: dummy5
           ports:
             - containerPort: 8080
+              name: http
+            # - containerPort: 8443
+            #   name: https
           volumeMounts:
             - name: opal-storage
               mountPath: /srv  
