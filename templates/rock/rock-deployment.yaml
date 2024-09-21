@@ -19,6 +19,19 @@ spec:
       containers:
         - name: rock
           image: {{ .Values.rock.image }}
+          env:
+            - name: ROCK_ADMINISTRATOR_NAME
+              value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_NAME }}
+            - name: ROCK_ADMINISTRATOR_PASSWORD
+              value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_PASSWORD }}
+            - name: ROCK_MANAGER_NAME
+              value: {{ .Values.rock.env.ROCK_MANAGER_NAME }}
+            - name: ROCK_MANAGER_PASSWORD
+              value: {{ .Values.rock.env.ROCK_MANAGER_PASSWORD }}
+            - name: ROCK_USER_NAME
+              value: {{ .Values.rock.env.ROCK_USER_NAME }}
+            - name: ROCK_USER_PASSWORD
+              value: {{ .Values.rock.env.ROCK_USER_PASSWORD }}
           ports:
             - containerPort: 8085
 

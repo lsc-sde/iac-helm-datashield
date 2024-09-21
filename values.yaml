@@ -17,7 +17,7 @@ mysqldb:
     storage: 1Gi
 
 mongodb:
-  image: mongo:6.0
+  image: mongo:4.4.18
   port: 27017
   pvc:
     storage: 1Gi
@@ -28,7 +28,7 @@ opal:
   pullPolicy: IfNotPresent
   env:
     OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
-    CSRF_ALLOWED: "'*'"
+    CSRF_ALLOWED: "192.168.0.23,*"
     ORG_OBIBA_OPAL_HTTPS_PORT: "443"
   service:
     type: ClusterIP
@@ -49,3 +49,10 @@ opal:
 rock:
   replicatCount: 1
   image: obiba/rock:latest
+  env:
+    ROCK_ADMINISTRATOR_NAME: admin
+    ROCK_ADMINISTRATOR_PASSWORD: p@55w0rd
+    ROCK_MANAGER_NAME: manager
+    ROCK_MANAGER_PASSWORD: p@55w0rd
+    ROCK_USER_NAME: user
+    ROCK_USER_PASSWORD: p@55w0rd

@@ -41,8 +41,14 @@ spec:
               value: {{ .Values.opal.env.CSRF_ALLOWED }}
             - name: org.obiba.opal.https.port
               value: {{ .Values.opal.env.ORG_OBIBA_OPAL_HTTPS_PORT | quote }}
+            # - name: org.obiba.opal.server.context-path
+            #   value: "/opal"
             - name: dummy
               value: dummy5
+            - name: ROCK_ADMINISTRATOR_NAME
+              value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_NAME }}
+            - name: ROCK_ADMINISTRATOR_PASSWORD
+              value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_PASSWORD }}
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -50,10 +56,10 @@ spec:
               mountPath: /srv  
             - name: opal-demo-customisations
               mountPath: /demo-customisations
-          lifecycle:
-            postStart:
-              exec:
-                command: ["/bin/bash", "-c", "/demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1" ]
+          # lifecycle:
+          #   postStart:
+          #     exec:
+          #       command: ["/bin/bash", "-c", "/demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1" ]
       restartPolicy: Always
       volumes:
       - name: opal-storage

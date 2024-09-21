@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "datashield.opal.name" . }}
+  labels:
+    app: {{ include "datashield.opal.name" . }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /opal
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "datashield.opal.name" . }}
+            port:
+              number: 80
