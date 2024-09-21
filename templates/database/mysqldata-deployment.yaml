@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: {{ include "datashield.mysqldb.name" . }}
-  strategy: {}
+  
   template:
     metadata:
       labels:
@@ -37,4 +37,4 @@ spec:
       volumes:
       - name: mysql-storage
         persistentVolumeClaim:
-          claimName: mysql-storage-claim
+          claimName: {{ include "datashield.mysqldb.name" . }}

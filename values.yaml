@@ -1,8 +1,7 @@
 agate:
   image: obiba/agate:2.8
-  administrator_password:
-    secret: ""
-    key: "agate-administrator-password"
+  env:
+    AGATE_ADMINISTRATOR_PASSWORD: "p@55w0rd"
 
 mysqldb:
   image: mysql
@@ -19,12 +18,9 @@ mysqldb:
 
 mongodb:
   image: mongo:6.0
-  port: "27017"
+  port: 27017
   pvc:
-    storageClassName: default
     storage: 1Gi
-
-mica: {}
 
 opal:
   replicaCount: 1
@@ -32,12 +28,23 @@ opal:
   pullPolicy: IfNotPresent
   env:
     OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
-    CSRF_ALLOWED: "*"
+    CSRF_ALLOWED: "'*'"
+    ORG_OBIBA_OPAL_HTTPS_PORT: "443"
   service:
     type: ClusterIP
     port: 80
   pvc:
     storage: 1Gi
+
+  demo:
+    OPAL_DEMO_USER_NAME: bob
+    OPAL_DEMO_USER_PASSWORD: P@55w0rd1
+    OPAL_DEMO_PROJECT: DEMO
+    OPAL_DEMO_TABLE: CNSIM1
+    OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/CNSIM/CNSIM1.csv
+    OPAL_COHORT_PROJECT: COHORT
+    OPAL_COHORT_TABLE: conditions1
+    OPAL_COHORT_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/synthea/conditionsa.csv
 
 rock:
   replicatCount: 1

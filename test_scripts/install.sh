@@ -11,4 +11,4 @@ microk8s.helm upgrade \
     --create-namespace \
     --version $VERSION \
     --values ./values.yaml \
-    --dry-run > ./logs/dry-run.yaml
+    # --dry-run > ./logs/dry-run.yaml

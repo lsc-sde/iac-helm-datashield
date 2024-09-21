@@ -5,11 +5,10 @@ metadata:
   labels:
     name: {{ include "datashield.mysqldb.name" . }}
 spec:
-  storageClassName: default
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
   resources:
     requests:
       storage: {{ .Values.mysqldb.pvc.storage | quote }}
-  volumeName: {{ include "datashield.mysqldb.name" . }}
+  # volumeName: {{ include "datashield.mysqldb.name" . }}

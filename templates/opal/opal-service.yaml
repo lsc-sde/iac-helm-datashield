@@ -8,8 +8,7 @@ spec:
   type: {{ .Values.opal.service.type }}
   ports:
     - name: opal
-      port: {{ .Values.opal.service.port }}
+      port: 80 # {{ .Values.opal.service.port }}
       targetPort: 8080
   selector:
-    matchLabels:
-      app: {{ include "datashield.opal.name" . }}
+    app: {{ include "datashield.opal.name" . }}

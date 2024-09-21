@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: {{ include "datashield.opal.name" . }}
-  strategy: {}
+  
   template:
     metadata:
       annotations: {}
@@ -26,27 +26,21 @@ spec:
             - name: MONGO_PORT
               value: "27017"
             - name: MYSQLDATA_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "datashield.opal.administrator_password.secret" . }}
-                  key: {{ .Values.opal.administrator_password.key}}
+              value: {{ .Values.mysqldb.env.MYSQLDATA_DATABASE }}
             - name: MYSQLDATA_HOST
-              value: {{ include "datashield.mongodb.name" . }}:3306
+              value: {{ include "datashield.mysqldb.name" . }}:3306
             - name: MYSQLDATA_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "datashield.mysqldb.administrator_password.secret" . }}
-                  key: {{ .Values.mysqldb.administrator_password.key}}
+              value: {{ .Values.mysqldb.env.MYSQLDATA_PASSWORD }}
             - name: MYSQLDATA_USER
               value: {{ .Values.mysqldb.env.MYSQLDATA_USER }}
             - name: OPAL_ADMINISTRATOR_PASSWORD
               value: {{ .Values.opal.env.OPAL_ADMINISTRATOR_PASSWORD }}
             - name: ROCK_HOSTS
-              value: {{ include "datashield.opal.name" . }}:8085
+              value: {{ include "datashield.rock.name" . }}:8085
             - name: CSRF_ALLOWED
               value: {{ .Values.opal.env.CSRF_ALLOWED }}
             - name: org.obiba.opal.https.port
-              value: {{ .Values.opal.env_vars.org_obiba_opal_https_port }}
+              value: {{ .Values.opal.env.ORG_OBIBA_OPAL_HTTPS_PORT | quote }}
             - name: dummy
               value: dummy5
           ports:
@@ -64,7 +58,7 @@ spec:
       volumes:
       - name: opal-storage
         persistentVolumeClaim:
-          claimName: opal-storage-claim
+          claimName: {{ include "datashield.opal.name" . }}
       - name: opal-demo-customisations
         configMap:
           name: opal-demo-configmap

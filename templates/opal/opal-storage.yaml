@@ -5,12 +5,11 @@ metadata:
   labels:
     app: {{ include "datashield.opal.name" . }}
 spec:
-  storageClassName: default
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
   resources:
     requests:
       storage: {{ .Values.opal.pvc.storage }}
-  volumeName: {{ include "datashield.opal.name" . }}
+  # volumeName: {{ include "datashield.opal.name" . }}
   

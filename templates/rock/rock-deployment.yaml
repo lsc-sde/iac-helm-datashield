@@ -10,14 +10,14 @@ spec:
   selector:
     matchLabels:
       app: {{ include "datashield.rock.name" . }}
-  strategy: {}
+  
   template:
     metadata:
       labels:
         app: {{ include "datashield.rock.name" . }}
     spec:
       containers:
-        - name: 
+        - name: rock
           image: {{ .Values.rock.image }}
           ports:
             - containerPort: 8085

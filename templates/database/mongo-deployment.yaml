@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: {{ include "datashield.mongodb.name" . }}  
-  strategy: {}
+  
   template:
     metadata:
       annotations: {}
@@ -30,4 +30,4 @@ spec:
       volumes:
       - name: "mongo-data-dir"
         persistentVolumeClaim:
-          claimName: "mongo-storage-claim"
+          claimName: {{ include "datashield.mongodb.name" . }}

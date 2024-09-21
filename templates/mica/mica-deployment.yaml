@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: {{ include "datashield.mica.name" . }}
-    strategy: {}
+    
   template:
     metadata:
       annotations: {}
@@ -32,7 +32,7 @@ spec:
             - name: MICA_ADMINISTRATOR_PASSWORD
               value: P@55w0rd
             - name: MONGO_HOST
-              value: mongo
+              value: {{ include "datashield.mongodb.name" . }}
             - name: MONGO_PORT
               value: "27017"
             - name: OPAL_URL

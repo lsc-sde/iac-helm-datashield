@@ -5,11 +5,10 @@ metadata:
   labels:
     app: {{ include "datashield.mongodb.name" . }}
 spec:
-  storageClassName: default
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
   resources:
     requests:
       storage:  {{ .Values.mongodb.pvc.storage | quote }}
-  volumeName: {{ include "datashield.mongodb.name" . }}
+  # volumeName: {{ include "datashield.mongodb.name" . }}
