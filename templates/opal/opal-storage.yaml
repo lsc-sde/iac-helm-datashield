@@ -11,5 +11,4 @@ spec:
   resources:
     requests:
       storage: {{ .Values.opal.pvc.storage }}
-  # volumeName: {{ include "datashield.opal.name" . }}
   

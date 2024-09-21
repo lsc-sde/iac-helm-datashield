@@ -11,4 +11,3 @@ spec:
   resources:
     requests:
       storage:  {{ .Values.mongodb.pvc.storage | quote }}
-  # volumeName: {{ include "datashield.mongodb.name" . }}
