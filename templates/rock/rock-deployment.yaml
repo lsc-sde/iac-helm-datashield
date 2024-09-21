@@ -1,55 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.rock.rock1.name }}-deployment
+  annotations: {}
+  name: {{ include "datashield.rock.name" . }}
   labels:
-    name: {{ .Values.rock.rock1.name }}-deployment
-    environment: {{ .Values.environment }}
-    context: {{ .Values.context }}
+    app: {{ include "datashield.rock.name" . }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.rock.replicatCount }}
   selector:
     matchLabels:
-      app: {{ .Values.rock.rock1.name }}-deployment
+      app: {{ include "datashield.rock.name" . }}
+  strategy: {}
   template:
     metadata:
       labels:
-        app: {{ .Values.rock.rock1.name }}-deployment
-        environment: {{ .Values.environment }}
-        context: {{ .Values.context }}
+        app: {{ include "datashield.rock.name" . }}
     spec:
       containers:
-        - name: rock 
-          image: datashield/rock-base:latest
+        - name: 
+          image: {{ .Values.rock.image }}
           ports:
-            - containerPort: {{ .Values.rock.rock1.port }}
-      restartPolicy: Always
----
-{{- if .Values.rock.rock2.build}}
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ .Values.rock.rock2.name }}-deployment
-  labels:
-    name: {{ .Values.rock.rock2.name }}-deployment
-    environment: {{ .Values.environment }}
-    context: {{ .Values.context }}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: {{ .Values.rock.rock2.name }}-deployment
-  template:
-    metadata:
-      labels:
-        app: {{ .Values.rock.rock2.name }}-deployment
-        environment: {{ .Values.environment }}
-        context: {{ .Values.context }}
-    spec:
-      containers:
-        - name: rock 
-          image: datashield/rock-base:latest
-          ports:
-            - containerPort: {{ .Values.rock.rock2.port }}
-      restartPolicy: Always
-{{- end}}
+            - containerPort: 8085
+

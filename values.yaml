@@ -28,18 +28,17 @@ mica: {}
 
 opal:
   replicaCount: 1
-  
-  image: 
-    repository: obiba
-    name: opal
-    tag: latest
-    pullPolicy: IfNotPresent
-  administrator_password:
-    secret: ""
-    key: "opal-administrator-password"
+  image: obiba/opal:latest
+  pullPolicy: IfNotPresent
+  env:
+    OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
+    CSRF_ALLOWED: "*"
   service:
     type: ClusterIP
     port: 80
+  pvc:
+    storage: 1Gi
 
 rock:
-
+  replicatCount: 1
+  image: obiba/rock:latest

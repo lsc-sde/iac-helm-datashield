@@ -2,19 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations: {}
+  name: {{ include "datashield.mica.name" . }}
   labels:
-    io.kompose.service: mica
-  name: mica
+    app: {{ include "datashield.mica.name" . }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: mica
+      app: {{ include "datashield.mica.name" . }}
+    strategy: {}
   template:
     metadata:
       annotations: {}
       labels:
-        io.kompose.service: mica
+        app: {{ include "datashield.mica.name" . }}
     spec:
       containers:
         - image: obiba/mica:5.3

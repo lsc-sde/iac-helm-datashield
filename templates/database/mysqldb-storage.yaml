@@ -7,12 +7,9 @@ metadata:
 spec:
   storageClassName: default
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.mongodb.pvc.storage | quote }}
+      storage: {{ .Values.mysqldb.pvc.storage | quote }}
   volumeName: {{ include "datashield.mysqldb.name" . }}
-
-  
-  
