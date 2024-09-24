@@ -33,7 +33,7 @@ data:
 
     # Add the NORMAL DEMO_USER as defined in the values.yaml
     opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.OPAL_DEMO_USER_NAME }} --upassword {{ .Values.opal.demo.OPAL_DEMO_USER_PASSWORD }}
-
+    
     ###########################################################################
     # CNSIM DEMO DATA
     ###########################################################################
@@ -56,26 +56,34 @@ data:
 
 
     ###########################################################################
-    # SYNTHEA DEMO DATA
+    # Eunomia OMOP Data
     ###########################################################################
 
-    # Add a project
-    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.OPAL_COHORT_PROJECT }} --database mongodb
+    # Create new project
+    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name EUNOMIA --database mongodb
 
-    # Add the COHORT data to the project
+    # Add data
     cd /tmp
-    mkdir opal-config-temp
-    cd opal-config-temp
-    wget {{ .Values.opal.demo.OPAL_COHORT_SOURCE_DATA_URL }}
+    wget "https://raw.githubusercontent.com/OHDSI/EunomiaDatasets/main/datasets/Synthea27Nj/Synthea27Nj_5.4.zip"
+    unzip Synthea27Nj_5.4.zip -d eunomia
+    cd eunomia
+    opal_fs_path="/home/administrator/eunomia"
+    mkdir -p $opal_fs_path
+    for filename in ./*.csv; do 
+      fname=$(basename $filename .csv);
+      opal_file_path="$opal_fs_path/$fname.csv"
 
-    opal_fs_path="/home/administrator"
-    opal_file_path="$opal_fs_path/`basename {{ .Values.opal.demo.OPAL_COHORT_SOURCE_DATA_URL }}`"
+      # Copy the file into the user filesystem      
+      cp $fname.csv $opal_fs_path
+      # opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up $fname.csv $opal_fs_path\$fname.csv
+      
+      # Import CSV files as tables
+      opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination EUNOMIA --path $opal_file_path  --tables $fname --separator , --type $fname
+    done
 
-    opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename {{ .Values.opal.demo.OPAL_COHORT_SOURCE_DATA_URL }}` $opal_fs_path
-
-    opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination {{ .Values.opal.demo.OPAL_COHORT_PROJECT }} --path $opal_file_path  --tables {{ .Values.opal.demo.OPAL_COHORT_TABLE }} --separator , --type Participant --valueType text
-
+    # Delete the files
     cd ..
-    rm -rf opal-config-temp
+    rm -rf eunomia
+    rm Synthea27Nj_5.4.zip
 
     touch /finished_local_customisation.txt

@@ -37,10 +37,10 @@ opal:
     storage: 1Gi
 
   demo:
-    OPAL_DEMO_USER_NAME: omop_user
-    OPAL_DEMO_USER_PASSWORD: P@55w0rd1
-    OPAL_DEMO_PROJECT: DEMO
-    OPAL_DEMO_TABLE: CNSIM1
+    OPAL_DEMO_USER_NAME: dsuser
+    OPAL_DEMO_USER_PASSWORD: P@ssw0rd
+    OPAL_DEMO_PROJECT: CNSIM
+    OPAL_DEMO_TABLE: CNSIM99
     OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/CNSIM/CNSIM1.csv
     OPAL_COHORT_PROJECT: COHORT
     OPAL_COHORT_TABLE: conditions1
