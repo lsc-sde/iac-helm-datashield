@@ -1,0 +1,1 @@
+microk8s enable cert-manager dashboard host-access hostpath-storage ingress metrics-server 
