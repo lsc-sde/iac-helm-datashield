@@ -4,7 +4,7 @@ agate:
     AGATE_ADMINISTRATOR_PASSWORD: "p@55w0rd"
 
 mysqldb:
-  image: mysql
+  image: mysql:9.0.1
   administrator_password:
     secret: ""
     key: "mysql-administrator-password"
@@ -24,7 +24,7 @@ mongodb:
 
 opal:
   replicaCount: 1
-  image: obiba/opal:latest
+  image: obiba/opal:4.7.4
   pullPolicy: IfNotPresent
   env:
     OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
@@ -37,7 +37,7 @@ opal:
     storage: 1Gi
 
   demo:
-    OPAL_DEMO_USER_NAME: bob
+    OPAL_DEMO_USER_NAME: omop_user
     OPAL_DEMO_USER_PASSWORD: P@55w0rd1
     OPAL_DEMO_PROJECT: DEMO
     OPAL_DEMO_TABLE: CNSIM1
@@ -48,7 +48,7 @@ opal:
 
 rock:
   replicatCount: 1
-  image: obiba/rock:latest
+  image: obiba/rock:2.1.0
   env:
     ROCK_ADMINISTRATOR_NAME: admin
     ROCK_ADMINISTRATOR_PASSWORD: p@55w0rd

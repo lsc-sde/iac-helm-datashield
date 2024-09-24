@@ -27,3 +27,4 @@ scripts/
 
 logs/
 *.code-workspace
+demo-data/

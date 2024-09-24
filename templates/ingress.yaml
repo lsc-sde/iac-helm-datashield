@@ -9,10 +9,10 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 64m
 spec:
-  tls:
-    - hosts:
-      - ingress.local
-      secretName: tls-secret
+  # tls:
+  #   - hosts:
+  #     - ingress.local
+  #     secretName: tls-secret
   ingressClassName: nginx
   rules:
   - host: ingress.local
