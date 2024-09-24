@@ -53,37 +53,5 @@ data:
     opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}` $opal_fs_path
 
     opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination {{ .Values.opal.demo.OPAL_DEMO_PROJECT }} --path $opal_file_path  --tables {{ .Values.opal.demo.OPAL_DEMO_TABLE }} --separator , --type Participant --valueType decimal
-
-
-    ###########################################################################
-    # Eunomia OMOP Data
-    ###########################################################################
-
-    # Create new project
-    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name EUNOMIA --database mongodb
-
-    # Add data
-    cd /tmp
-    wget "https://raw.githubusercontent.com/OHDSI/EunomiaDatasets/main/datasets/Synthea27Nj/Synthea27Nj_5.4.zip"
-    unzip Synthea27Nj_5.4.zip -d eunomia
-    cd eunomia
-    opal_fs_path="/home/administrator/eunomia"
-    mkdir -p $opal_fs_path
-    for filename in ./*.csv; do 
-      fname=$(basename $filename .csv);
-      opal_file_path="$opal_fs_path/$fname.csv"
-
-      # Copy the file into the user filesystem      
-      cp $fname.csv $opal_fs_path
-      # opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up $fname.csv $opal_fs_path\$fname.csv
-      
-      # Import CSV files as tables
-      opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination EUNOMIA --path $opal_file_path  --tables $fname --separator , --type $fname
-    done
-
-    # Delete the files
-    cd ..
-    rm -rf eunomia
-    rm Synthea27Nj_5.4.zip
-
+    
     touch /finished_local_customisation.txt
