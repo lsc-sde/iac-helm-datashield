@@ -1,3 +1,4 @@
+{{ if .Values.agate.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,3 +36,4 @@ spec:
             - name: RECAPTCHA_SECRET_KEY
               value: http://agate:8081
       restartPolicy: Always
+{{ end }}

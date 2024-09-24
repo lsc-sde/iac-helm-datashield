@@ -1,9 +1,14 @@
 agate:
+  enabled: false
   image: obiba/agate:2.8
   env:
     AGATE_ADMINISTRATOR_PASSWORD: "p@55w0rd"
 
+mica:
+  enabled: false
+
 mysqldb:
+  enabled: false
   image: mysql:9.0.1
   administrator_password:
     secret: ""

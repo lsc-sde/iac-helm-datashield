@@ -1,3 +1,4 @@
+{{ if .Values.mysqldb.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,3 +39,4 @@ spec:
       - name: mysql-storage
         persistentVolumeClaim:
           claimName: {{ include "datashield.mysqldb.name" . }}
+{{ end }}
