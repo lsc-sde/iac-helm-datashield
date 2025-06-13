@@ -1,15 +1,21 @@
-{{ if .Values.mongodb.enabled }}
+{{- if and .Values.mongodb.enabled .Values.mongodb.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "datashield.mongodb.name" . }}
   labels:
-    app: {{ include "datashield.mongodb.name" . }}
+    {{- include "datashield.mongodb.labels" . | nindent 4 }}
+  {{- with .Values.mongodb.persistence.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
+    - {{ .Values.mongodb.persistence.accessMode | quote }}
+  {{- if .Values.global.storageClass }}
+  storageClassName: {{ .Values.global.storageClass | quote }}
+  {{- end }}
   resources:
     requests:
-      storage:  {{ .Values.mongodb.pvc.storage | quote }}
-{{ end }}
+      storage: {{ .Values.mongodb.persistence.size | quote }}
+{{- end }}

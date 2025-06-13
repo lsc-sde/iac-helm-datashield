@@ -1,42 +1,81 @@
-{{ if .Values.agate.enabled }}
+{{- if .Values.agate.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
-  labels:
-    app: {{ include "datashield.agate.name" . }}
   name: {{ include "datashield.agate.name" . }}
+  labels:
+    {{- include "datashield.agate.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.agate.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "datashield.agate.name" . }}
+      {{- include "datashield.agate.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations: {}
       labels:
-        app: {{ include "datashield.agate.name" . }}
+        {{- include "datashield.agate.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "datashield.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: agate
-          image: {{ .Values.agate.image }}
-          {{ if .Values.agate.resources }}
-          resources: 
-            {{- .Values.agate.resources | nindent 12}}
-          {{ end }}
+          image: "{{ .Values.agate.image.repository }}:{{ .Values.agate.image.tag }}"
+          imagePullPolicy: {{ .Values.agate.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
           env:
             - name: AGATE_ADMINISTRATOR_PASSWORD
-              value: {{ .Values.agate.env.AGATE_ADMINISTRATOR_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: agate-administrator-password
+            {{- if .Values.mongodb.enabled }}
             - name: MONGO_HOST
               value: {{ include "datashield.mongodb.name" . }}
             - name: MONGO_PORT
-              value: "27017"
+              value: {{ .Values.mongodb.service.port | quote }}
+            {{- end }}
             - name: RECAPTCHA_SITE_KEY
-              value: http://opal:8080
+              value: "http://opal:8080"
             - name: RECAPTCHA_SECRET_KEY
-              value: http://agate:8081
-          ports:
-            - containerPort: 8081
-              name: http
-      restartPolicy: Always
-{{ end }}
+              value: "http://agate:8081"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.agate.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+      {{- with .Values.agate.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.agate.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.agate.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

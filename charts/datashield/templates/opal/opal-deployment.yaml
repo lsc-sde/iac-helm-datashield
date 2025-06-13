@@ -1,70 +1,136 @@
+{{- if .Values.opal.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
   name: {{ include "datashield.opal.name" . }}
   labels:
-    app: {{ include "datashield.opal.name" . }}
+    {{- include "datashield.opal.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.opal.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "datashield.opal.name" . }}
-  
+      {{- include "datashield.opal.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations: {}
       labels:
-        app: {{ include "datashield.opal.name" . }}
+        {{- include "datashield.opal.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "datashield.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: opal
-          image: {{ .Values.opal.image }}
+          image: "{{ .Values.opal.image.repository }}:{{ .Values.opal.image.tag }}"
+          imagePullPolicy: {{ .Values.opal.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
           env:
+            {{- if .Values.mongodb.enabled }}
             - name: MONGO_HOST
               value: {{ include "datashield.mongodb.name" . }}
             - name: MONGO_PORT
-              value: "27017"
-            - name: MYSQLDATA_DATABASE
-              value: {{ .Values.mysqldb.env.MYSQLDATA_DATABASE }}
+              value: {{ .Values.mongodb.service.port | quote }}
+            {{- end }}
+            {{- if .Values.mysql.enabled }}
             - name: MYSQLDATA_HOST
-              value: {{ include "datashield.mysqldb.name" . }}:3306
-            - name: MYSQLDATA_PASSWORD
-              value: {{ .Values.mysqldb.env.MYSQLDATA_PASSWORD }}
+              value: "{{ include "datashield.mysql.name" . }}:{{ .Values.mysql.service.port }}"
+            - name: MYSQLDATA_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-database
             - name: MYSQLDATA_USER
-              value: {{ .Values.mysqldb.env.MYSQLDATA_USER }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-username
+            - name: MYSQLDATA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-password
+            {{- end }}
             - name: OPAL_ADMINISTRATOR_PASSWORD
-              value: {{ .Values.opal.env.OPAL_ADMINISTRATOR_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: opal-administrator-password
+            {{- if .Values.rock.enabled }}
             - name: ROCK_HOSTS
-              value: {{ include "datashield.rock.name" . }}:8085
+              value: "{{ include "datashield.rock.name" . }}:{{ .Values.rock.service.port }}"
+            {{- end }}
             - name: CSRF_ALLOWED
-              value: {{ .Values.opal.env.CSRF_ALLOWED }}
+              value: {{ .Values.opal.config.csrfAllowed | quote }}
             - name: org.obiba.opal.https.port
-              value: {{ .Values.opal.env.ORG_OBIBA_OPAL_HTTPS_PORT | quote }}
+              value: {{ .Values.opal.config.httpsPort | quote }}
             - name: org.obiba.opal.server.context-path
-              value: "/opal"
-            - name: dummy
-              value: dummy5
-          ports:
-            - containerPort: 8080
-              name: http
-            # - containerPort: 8443
-            #   name: https
+              value: {{ .Values.opal.config.contextPath | quote }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.opal.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.opal.persistence.enabled }}
           volumeMounts:
             - name: opal-storage
-              mountPath: /srv  
-            - name: opal-demo-customisations
+              mountPath: /srv
+            {{- if .Values.opal.demo.enabled }}
+            - name: opal-demo-config
               mountPath: /demo-customisations
+            {{- end }}
+          {{- end }}
+          {{- if .Values.opal.demo.enabled }}
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/bash", "-c", "/demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1" ]
-      restartPolicy: Always
+                command:
+                  - /bin/bash
+                  - -c
+                  - /demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1
+          {{- end }}
       volumes:
-      - name: opal-storage
-        persistentVolumeClaim:
-          claimName: {{ include "datashield.opal.name" . }}
-      - name: opal-demo-customisations
-        configMap:
-          name: opal-demo-configmap
-          defaultMode: 0777
+        {{- if .Values.opal.persistence.enabled }}
+        - name: opal-storage
+          persistentVolumeClaim:
+            claimName: {{ include "datashield.opal.name" . }}
+        {{- end }}
+        {{- if .Values.opal.demo.enabled }}
+        - name: opal-demo-config
+          configMap:
+            name: {{ include "datashield.opal.name" . }}-demo-config
+            defaultMode: 0755
+        {{- end }}
+      {{- with .Values.opal.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.opal.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.opal.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

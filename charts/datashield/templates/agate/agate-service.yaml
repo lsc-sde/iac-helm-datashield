@@ -1,16 +1,21 @@
-{{ if .Values.agate.enabled }}
+{{- if .Values.agate.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "datashield.agate.name" . }}
   labels:
-    app: {{ include "datashield.agate.name" . }}
+    {{- include "datashield.agate.labels" . | nindent 4 }}
+  {{- with .Values.agate.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.agate.service.type }}
   ports:
     - name: http
-      port: 8081
-      targetPort: 8081
+      port: {{ .Values.agate.service.port }}
+      targetPort: http
+      protocol: TCP
   selector:
-    app: {{ include "datashield.agate.name" . }}
-{{ end }}
+    {{- include "datashield.agate.selectorLabels" . | nindent 4 }}
+{{- end }}

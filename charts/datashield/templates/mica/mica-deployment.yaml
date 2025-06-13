@@ -1,41 +1,87 @@
-{{ if .Values.mica.enabled }}
+{{- if .Values.mica.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
   name: {{ include "datashield.mica.name" . }}
   labels:
-    app: {{ include "datashield.mica.name" . }}
+    {{- include "datashield.mica.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.mica.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "datashield.mica.name" . }}
+      {{- include "datashield.mica.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations: {}
       labels:
-        app: {{ include "datashield.mica.name" . }}
+        {{- include "datashield.mica.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "datashield.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - image: {{ .Values.mica.image }}
-          name: mica
-          resources: {}
+        - name: mica
+          image: "{{ .Values.mica.image.repository }}:{{ .Values.mica.image.tag }}"
+          imagePullPolicy: {{ .Values.mica.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8082
+              protocol: TCP
           env:
             - name: JAVA_OPTS
-              value: {{ .Values.mica.env.JAVA_OPTS }}
+              value: {{ .Values.mica.config.javaOpts }}
             - name: MICA_ADMINISTRATOR_PASSWORD
-              value: {{ .Values.mica.env.MICA_ADMINISTRATOR_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mica-administrator-password
+            {{- if .Values.mongodb.enabled }}
             - name: MONGO_HOST
               value: {{ include "datashield.mongodb.name" . }}
             - name: MONGO_PORT
-              value: "27017"
+              value: {{ .Values.mongodb.service.port | quote }}
+            {{- end }}
+            {{- if .Values.opal.enabled }}
             - name: OPAL_URL
-              value: http://opal:8080
+              value: "http://{{ include "datashield.opal.name" . }}:{{ .Values.opal.service.port }}"
+            {{- end }}
+            {{- if .Values.agate.enabled }}
             - name: AGATE_URL
-              value: http://agate:8081
-          ports:
-            - containerPort: 8082
-              name: http
-      restartPolicy: Always
-{{ end }}
+              value: "http://{{ include "datashield.agate.name" . }}:{{ .Values.agate.service.port }}"
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.mica.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+      {{- with .Values.mica.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mica.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mica.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

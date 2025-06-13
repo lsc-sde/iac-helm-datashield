@@ -1,15 +1,21 @@
-{{ if .Values.mysqldb.enabled }}
+{{- if .Values.mysql.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "datashield.mysqldb.name" . }}
+  name: {{ include "datashield.mysql.name" . }}
   labels:
-    app: {{ include "datashield.mysqldb.name" . }}
+    {{- include "datashield.mysql.labels" . | nindent 4 }}
+  {{- with .Values.mysql.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+  type: {{ .Values.mysql.service.type }}
   ports:
-    - name: tcp
-      port: 3306    
-      targetPort: 3306
+    - name: mysql
+      port: {{ .Values.mysql.service.port }}
+      targetPort: mysql
+      protocol: TCP
   selector:
-    app: {{ include "datashield.mysqldb.name" . }}
-{{ end }}
+    {{- include "datashield.mysql.selectorLabels" . | nindent 4 }}
+{{- end }}

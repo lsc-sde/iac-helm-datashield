@@ -1,17 +1,21 @@
+{{- if .Values.opal.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "datashield.opal.name" . }}
   labels:
-    app: {{ include "datashield.opal.name" . }}
+    {{- include "datashield.opal.labels" . | nindent 4 }}
+  {{- with .Values.opal.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.opal.service.type }}
   ports:
     - name: http
-      port: 80 # {{ .Values.opal.service.port }}
-      targetPort: 8080
-    # - name: https
-    #   port:  443
-    #   targetPort: 8443
+      port: {{ .Values.opal.service.port }}
+      targetPort: http
+      protocol: TCP
   selector:
-    app: {{ include "datashield.opal.name" . }}
+    {{- include "datashield.opal.selectorLabels" . | nindent 4 }}
+{{- end }}

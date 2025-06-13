@@ -1,14 +1,22 @@
+{{- if and .Values.opal.enabled .Values.opal.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "datashield.opal.name" . }}
   labels:
-    app: {{ include "datashield.opal.name" . }}
+    {{- include "datashield.opal.labels" . | nindent 4 }}
+  {{- with .Values.opal.persistence.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
+    - {{ .Values.opal.persistence.accessMode | quote }}
+  {{- if .Values.global.storageClass }}
+  storageClassName: {{ .Values.global.storageClass | quote }}
+  {{- end }}
   resources:
     requests:
-      storage: {{ .Values.opal.pvc.storage | quote }}
+      storage: {{ .Values.opal.persistence.size | quote }}
+{{- end }}
   

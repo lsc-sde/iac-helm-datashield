@@ -1,74 +1,80 @@
+{{- if .Values.rock.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
   name: {{ include "datashield.rock.name" . }}
   labels:
-    app: {{ include "datashield.rock.name" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    {{- include "datashield.rock.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.rock.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "datashield.rock.name" . }}
+      {{- include "datashield.rock.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "datashield.rock.name" . }}
-        chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-        release: "{{ .Release.Name }}"
-        heritage: "{{ .Release.Service }}"
+        {{- include "datashield.rock.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "datashield.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: rock
-          image: {{ .Values.rock.image | quote }}
-          imagePullPolicy: {{ .Values.rock.imagePullPolicy | default "IfNotPresent" }}
+          image: "{{ .Values.rock.image.repository }}:{{ .Values.rock.image.tag }}"
+          imagePullPolicy: {{ .Values.rock.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8085
+              protocol: TCP
           env:
             - name: ROCK_ADMINISTRATOR_NAME
-              value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_NAME }}
+              value: {{ .Values.rock.config.administratorName }}
             - name: ROCK_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.rock.secretName }}
-                  key: ROCK_ADMINISTRATOR_PASSWORD
+                  name: {{ include "datashield.secretName" . }}
+                  key: rock-administrator-password
             - name: ROCK_MANAGER_NAME
-              value: {{ .Values.rock.env.ROCK_MANAGER_NAME }}
+              value: {{ .Values.rock.config.managerName }}
             - name: ROCK_MANAGER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.rock.secretName }}
-                  key: ROCK_MANAGER_PASSWORD
+                  name: {{ include "datashield.secretName" . }}
+                  key: rock-manager-password
             - name: ROCK_USER_NAME
-              value: {{ .Values.rock.env.ROCK_USER_NAME }}
+              value: {{ .Values.rock.config.userName }}
             - name: ROCK_USER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.rock.secretName }}
-                  key: ROCK_USER_PASSWORD
-          ports:
-            - containerPort: 8085
-          resources:
-            requests:
-              cpu: {{ .Values.rock.resources.requests.cpu | default "100m" }}
-              memory: {{ .Values.rock.resources.requests.memory | default "128Mi" }}
-            limits:
-              cpu: {{ .Values.rock.resources.limits.cpu | default "500m" }}
-              memory: {{ .Values.rock.resources.limits.memory | default "512Mi" }}
+                  name: {{ include "datashield.secretName" . }}
+                  key: rock-user-password
+          {{- if .Values.rock.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8085
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            {{- toYaml .Values.rock.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.rock.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8085
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            {{- toYaml .Values.rock.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.rock.resources | nindent 12 }}
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
+            {{- toYaml .Values.securityContext | nindent 12 }}
+      {{- with .Values.rock.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rock.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rock.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
 

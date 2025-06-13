@@ -1,35 +1,101 @@
-{{ if .Values.mongodb.enabled }}
+{{- if .Values.mongodb.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  name: {{ include "datashield.mongodb.name" . }}
   labels:
-    app: {{ include "datashield.mongodb.name" . }}
-  name: {{ include "datashield.mongodb.name" . }}  
+    {{- include "datashield.mongodb.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.mongodb.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "datashield.mongodb.name" . }}  
-  
+      {{- include "datashield.mongodb.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations: {}
       labels:
-        app: {{ include "datashield.mongodb.name" . }}  
+        {{- include "datashield.mongodb.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "datashield.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: mongo
-          image: {{ .Values.mongodb.image }}
-          {{ if .Values.mongodb.resources }}
-          resources: 
-            {{- .Values.mongodb.resources | nindent 12}}
-          {{ end }}
+        - name: mongodb
+          image: "{{ .Values.mongodb.image.repository }}:{{ .Values.mongodb.image.tag }}"
+          imagePullPolicy: {{ .Values.mongodb.image.pullPolicy }}
+          ports:
+            - name: mongodb
+              containerPort: 27017
+              protocol: TCP
+          {{- if .Values.mongodb.auth.enabled }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "root"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mongodb-root-password
+            {{- if .Values.mongodb.auth.username }}
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mongodb-database
+            {{- end }}
+          {{- end }}
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --disableImplicitSessions
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --disableImplicitSessions
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          resources:
+            {{- toYaml .Values.mongodb.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.mongodb.persistence.enabled }}
           volumeMounts:
-          - name: "mongo-data-dir"
-            mountPath: "/data/db"
+            - name: mongodb-data
+              mountPath: /data/db
+          {{- end }}
+      {{- if .Values.mongodb.persistence.enabled }}
       volumes:
-      - name: "mongo-data-dir"
-        persistentVolumeClaim:
-          claimName: {{ include "datashield.mongodb.name" . }}
-{{ end }}
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: {{ include "datashield.mongodb.name" . }}
+      {{- end }}
+      {{- with .Values.mongodb.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mongodb.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mongodb.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

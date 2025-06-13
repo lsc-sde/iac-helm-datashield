@@ -1,108 +1,339 @@
-agate:
-  enabled: false
-  image: obiba/agate:2.8
-  env:
-    AGATE_ADMINISTRATOR_PASSWORD: "p@55w0rd"
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
+# Default values for datashield.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
-mica:
-  enabled: false
-  image: obiba/mica:5.3
-  env:
-    MICA_ADMINISTRATOR_PASSWORD: P@55w0rd
-    JAVA_OPTS: -Xmx2G
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
+# Global settings
+global:
+  # Image registry and pull secrets
+  imageRegistry: ""
+  imagePullSecrets: []
+  # Storage class for persistent volumes
+  storageClass: ""
 
-mysqldb:
-  enabled: false
-  image: mysql:9.0.1
-  administrator_password:
-    secret: ""
-    key: "mysql-administrator-password"
-  env:
-    MYSQLDATA_DATABASE: "dsdb"
-    MYSQLDATA_USER: "dsdb_user"
-    MYSQLDATA_PASSWORD: "p@55w0rd"
-  pvc:
-    storage: 1Gi
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
+# Name overrides
+nameOverride: ""
+fullnameOverride: ""
 
+# Service account configuration
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# Pod security context
+podSecurityContext:
+  fsGroup: 2000
+
+# Security context for containers
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# MongoDB configuration
 mongodb:
   enabled: true
-  image: mongo:4.4.18
-  port: 27017
-  pvc:
-    storage: 1Gi
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
-
-opal:
   replicaCount: 1
-  image: obiba/opal:5.1.4
-  pullPolicy: IfNotPresent
-  env:
-    OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
-    CSRF_ALLOWED: "ingress.local"
-    ORG_OBIBA_OPAL_HTTPS_PORT: "-1"
+  image:
+    repository: mongo
+    tag: "6.0.13"
+    pullPolicy: IfNotPresent
+  
   service:
     type: ClusterIP
-    port: 80
-  pvc:
-    storage: 1Gi
+    port: 27017
+    annotations: {}
+  
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    annotations: {}
+  
   resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
     limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
       cpu: 500m
       memory: 512Mi
-  demo:
-    OPAL_DEMO_USER_NAME: dsuser
-    OPAL_DEMO_USER_PASSWORD: P@ssw0rd
-    OPAL_DEMO_PROJECT: CNSIM
-    OPAL_DEMO_TABLE: CNSIM99
-    OPAL_DEMO_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/CNSIM/CNSIM1.csv
-    OPAL_COHORT_PROJECT: COHORT
-    OPAL_COHORT_TABLE: conditions1
-    OPAL_COHORT_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/synthea/conditionsa.csv
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # MongoDB authentication
+  auth:
+    enabled: false
+    rootPassword: ""
+    username: ""
+    password: ""
+    database: ""
 
-rock:
+# MySQL configuration
+mysql:
+  enabled: false
   replicaCount: 1
-  image: obiba/rock:2.1.4
-  env:
-    ROCK_ADMINISTRATOR_NAME: admin
-    ROCK_ADMINISTRATOR_PASSWORD: p@55w0rd
-    ROCK_MANAGER_NAME: manager
-    ROCK_MANAGER_PASSWORD: p@55w0rd
-    ROCK_USER_NAME: user
-    ROCK_USER_PASSWORD: p@55w0rd
+  image:
+    repository: mysql
+    tag: "8.0.35"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 3306
+    annotations: {}
+  
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 8Gi
+    annotations: {}
+  
   resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
     limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
       cpu: 500m
       memory: 512Mi
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # MySQL configuration
+  auth:
+    rootPassword: "secure-root-password"
+    database: "dsdb"
+    username: "dsdb_user"
+    password: "secure-user-password"
+
+# Opal configuration
+opal:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: obiba/opal
+    tag: "5.1.4"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 8080
+    annotations: {}
+  
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    annotations: {}
+  
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # Opal configuration
+  config:
+    administratorPassword: "secure-admin-password"
+    csrfAllowed: "datashield.local"
+    httpsPort: "-1"
+    contextPath: "/opal"
+  
+  # Demo data configuration
+  demo:
+    enabled: true
+    userName: "dsuser"
+    userPassword: "demo-password"
+    projectName: "CNSIM"
+    tableName: "CNSIM99"
+    sourceDataUrl: "https://raw.githubusercontent.com/OllyButters/ds_data/main/CNSIM/CNSIM1.csv"
+    cohortProject: "COHORT"
+    cohortTable: "conditions1"
+    cohortSourceDataUrl: "https://raw.githubusercontent.com/OllyButters/ds_data/main/synthea/conditionsa.csv"
+
+# Rock configuration
+rock:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: obiba/rock
+    tag: "2.1.4"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 8085
+    annotations: {}
+  
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # Rock configuration
+  config:
+    administratorName: "admin"
+    administratorPassword: "secure-admin-password"
+    managerName: "manager"
+    managerPassword: "secure-manager-password"
+    userName: "user"
+    userPassword: "secure-user-password"
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+  
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+# Agate configuration
+agate:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: obiba/agate
+    tag: "2.8"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 8081
+    annotations: {}
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # Agate configuration
+  config:
+    administratorPassword: "secure-admin-password"
+
+# Mica configuration
+mica:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: obiba/mica
+    tag: "5.3"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 8082
+    annotations: {}
+  
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  # Mica configuration
+  config:
+    administratorPassword: "secure-admin-password"
+    javaOpts: "-Xmx2G"
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+  hosts:
+    - host: datashield.local
+      paths:
+        - path: /opal(/|$)(.*)
+          pathType: ImplementationSpecific
+          service:
+            name: opal
+            port: 8080
+  tls:
+    - secretName: datashield-tls
+      hosts:
+        - datashield.local
+
+# Autoscaling configuration (disabled by default)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1
+
+# Network policies
+networkPolicy:
+  enabled: false
+  ingress: []
+  egress: []
+
+# Monitoring and observability
+monitoring:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    labels: {}
+    annotations: {}
+
+# Testing
+tests:
+  enabled: true
+  image:
+    repository: busybox
+    tag: "1.35"
+    pullPolicy: IfNotPresent

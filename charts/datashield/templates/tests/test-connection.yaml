@@ -1,0 +1,25 @@
+{{- if .Values.tests.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "datashield.fullname" . }}-test"
+  labels:
+    {{- include "datashield.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: test
+      image: "{{ .Values.tests.image.repository }}:{{ .Values.tests.image.tag }}"
+      imagePullPolicy: {{ .Values.tests.image.pullPolicy }}
+      command: ['wget']
+      args: ['--no-check-certificate', '--spider', '--timeout=10', '--tries=1', 'http://{{ include "datashield.opal.name" . }}:{{ .Values.opal.service.port }}/']
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+{{- end }}

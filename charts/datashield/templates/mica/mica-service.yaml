@@ -1,16 +1,21 @@
-{{ if .Values.mica.enabled }}
+{{- if .Values.mica.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "datashield.mica.name" . }}
   labels:
-    app: {{ include "datashield.mica.name" . }}
+    {{- include "datashield.mica.labels" . | nindent 4 }}
+  {{- with .Values.mica.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.mica.service.type }}
   ports:
     - name: http
-      port: 8082
-      targetPort: 8082
+      port: {{ .Values.mica.service.port }}
+      targetPort: http
+      protocol: TCP
   selector:
-    app: {{ include "datashield.mica.name" . }}
-{{ end }}
+    {{- include "datashield.mica.selectorLabels" . | nindent 4 }}
+{{- end }}

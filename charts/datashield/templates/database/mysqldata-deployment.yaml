@@ -1,42 +1,103 @@
-{{ if .Values.mysqldb.enabled }}
+{{- if .Values.mysql.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
+  name: {{ include "datashield.mysql.name" . }}
   labels:
-    app: {{ include "datashield.mysqldb.name" . }}
-  name: {{ include "datashield.mysqldb.name" . }}
+    {{- include "datashield.mysql.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.mysql.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "datashield.mysqldb.name" . }}
-  
+      {{- include "datashield.mysql.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ include "datashield.mysqldb.name" . }}
+        {{- include "datashield.mysql.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "datashield.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: mysqldata
-          image: {{ .Values.mysqldb.image }}
-          env:
-            - name: MYSQL_DATABASE
-              value: {{ .Values.mysqldb.env.MYSQLDATA_DATABASE }}
-            - name: MYSQL_PASSWORD
-              value: {{ .Values.mysqldb.env.MYSQLDATA_PASSWORD }}
-            - name: MYSQL_USER
-              value: {{ .Values.mysqldb.env.MYSQLDATA_USER }}
-            - name: MYSQL_RANDOM_ROOT_PASSWORD
-              value: "TRUE"
+        - name: mysql
+          image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+          imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
           ports:
-            - containerPort: 3306
+            - name: mysql
+              containerPort: 3306
+              protocol: TCP
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-database
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.secretName" . }}
+                  key: mysql-password
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}"
+            initialDelaySeconds: 5
+            periodSeconds: 2
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.mysql.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- if .Values.mysql.persistence.enabled }}
           volumeMounts:
-          - name: mysql-storage
-            mountPath: /var/lib/mysql
-      restartPolicy: Always
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          {{- end }}
+      {{- if .Values.mysql.persistence.enabled }}
       volumes:
-      - name: mysql-storage
-        persistentVolumeClaim:
-          claimName: {{ include "datashield.mysqldb.name" . }}
-{{ end }}
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: {{ include "datashield.mysql.name" . }}
+      {{- end }}
+      {{- with .Values.mysql.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mysql.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mysql.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

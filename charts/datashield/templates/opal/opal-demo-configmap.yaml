@@ -1,7 +1,10 @@
+{{- if and .Values.opal.enabled .Values.opal.demo.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: opal-demo-configmap
+  name: {{ include "datashield.opal.name" . }}-demo-config
+  labels:
+    {{- include "datashield.opal.labels" . | nindent 4 }}
 data:
   opal-demo-customisation.sh: |-
     #!/usr/bin/env bash
@@ -24,7 +27,6 @@ data:
       sleep 5
     done
 
-
     # Most of these will just default to localhost
 
     # Get the verion of opal
@@ -32,26 +34,27 @@ data:
     opal system --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --version
 
     # Add the NORMAL DEMO_USER as defined in the values.yaml
-    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.OPAL_DEMO_USER_NAME }} --upassword {{ .Values.opal.demo.OPAL_DEMO_USER_PASSWORD }}
+    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.userName }} --upassword {{ .Values.opal.demo.userPassword }}
     
     ###########################################################################
     # CNSIM DEMO DATA
     ###########################################################################
 
     # Add a project
-    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.OPAL_DEMO_PROJECT }} --database mongodb
+    opal project --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.projectName }} --database mongodb
 
     # Add the CNSIM1 data to the project
     cd /tmp
     mkdir opal-config-temp
     cd opal-config-temp
-    wget {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}
+    wget {{ .Values.opal.demo.sourceDataUrl }}
 
     opal_fs_path="/home/administrator"
-    opal_file_path="$opal_fs_path/`basename {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}`"
+    opal_file_path="$opal_fs_path/`basename {{ .Values.opal.demo.sourceDataUrl }}`"
 
-    opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename {{ .Values.opal.demo.OPAL_DEMO_SOURCE_DATA_URL }}` $opal_fs_path
+    opal file --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD -up `basename {{ .Values.opal.demo.sourceDataUrl }}` $opal_fs_path
 
-    opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination {{ .Values.opal.demo.OPAL_DEMO_PROJECT }} --path $opal_file_path  --tables {{ .Values.opal.demo.OPAL_DEMO_TABLE }} --separator , --type Participant --valueType decimal
+    opal import-csv --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --destination {{ .Values.opal.demo.projectName }} --path $opal_file_path  --tables {{ .Values.opal.demo.tableName }} --separator , --type Participant --valueType decimal
     
     touch /finished_local_customisation.txt
+{{- end }}
