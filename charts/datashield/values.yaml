@@ -29,7 +29,7 @@ mongodb:
 
 opal:
   replicaCount: 1
-  image: obiba/opal:4.7.4
+  image: obiba/opal:5.1.4
   pullPolicy: IfNotPresent
   env:
     OPAL_ADMINISTRATOR_PASSWORD: "p@55w0rd"
@@ -52,8 +52,8 @@ opal:
     OPAL_COHORT_SOURCE_DATA_URL: https://raw.githubusercontent.com/OllyButters/ds_data/main/synthea/conditionsa.csv
 
 rock:
-  replicatCount: 1
-  image: obiba/rock:2.1.0
+  replicaCount: 1
+  image: obiba/rock:2.1.4
   env:
     ROCK_ADMINISTRATOR_NAME: admin
     ROCK_ADMINISTRATOR_PASSWORD: p@55w0rd
