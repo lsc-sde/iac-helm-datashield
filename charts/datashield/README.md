@@ -65,11 +65,16 @@ The following table lists the configurable parameters and their default values.
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `podSecurityContext.fsGroup` | Pod security context fsGroup | `2000` |
+| `podSecurityContext.runAsNonRoot` | Pod runs as non-root user | `true` |
+| `podSecurityContext.runAsUser` | Pod user ID | `1000` |
+| `podSecurityContext.runAsGroup` | Pod group ID | `1000` |
+| `podSecurityContext.fsGroup` | Pod filesystem group ID | `1000` |
 | `securityContext.capabilities.drop` | Container security context capabilities to drop | `["ALL"]` |
 | `securityContext.readOnlyRootFilesystem` | Container read-only root filesystem | `false` |
 | `securityContext.runAsNonRoot` | Container runs as non-root | `true` |
 | `securityContext.runAsUser` | Container user ID | `1000` |
+| `securityContext.runAsGroup` | Container group ID | `1000` |
+| `securityContext.allowPrivilegeEscalation` | Allow privilege escalation | `false` |
 
 ### MongoDB Configuration
 
@@ -313,6 +318,12 @@ The chart mounts persistent volumes for:
 3. **Demo data not loading**
    - Check Opal pod logs for demo script execution
    - Verify network access to external data sources
+
+4. **Permission errors with persistent volumes**
+   - All containers run as non-root user (1000) for security
+   - Persistent volumes are configured with matching fsGroup (1000) for proper permissions
+   - If you encounter permission issues, verify your storage class supports fsGroup
+   - For additional security, consider using a storage class that supports SecurityContext constraints
 
 ### Useful Commands
 
