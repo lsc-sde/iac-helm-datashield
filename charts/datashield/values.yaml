@@ -3,6 +3,13 @@ agate:
   image: obiba/agate:2.8
   env:
     AGATE_ADMINISTRATOR_PASSWORD: "p@55w0rd"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 mica:
   enabled: false
@@ -10,6 +17,13 @@ mica:
   env:
     MICA_ADMINISTRATOR_PASSWORD: P@55w0rd
     JAVA_OPTS: -Xmx2G
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 mysqldb:
   enabled: false
@@ -21,9 +35,15 @@ mysqldb:
     MYSQLDATA_DATABASE: "dsdb"
     MYSQLDATA_USER: "dsdb_user"
     MYSQLDATA_PASSWORD: "p@55w0rd"
-    # MYSQL_RANDOM_ROOT_PASSWORD: "yes"
   pvc:
     storage: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 mongodb:
   enabled: true
@@ -31,6 +51,13 @@ mongodb:
   port: 27017
   pvc:
     storage: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 opal:
   replicaCount: 1
@@ -45,7 +72,13 @@ opal:
     port: 80
   pvc:
     storage: 1Gi
-
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
   demo:
     OPAL_DEMO_USER_NAME: dsuser
     OPAL_DEMO_USER_PASSWORD: P@ssw0rd
@@ -66,3 +99,10 @@ rock:
     ROCK_MANAGER_PASSWORD: p@55w0rd
     ROCK_USER_NAME: user
     ROCK_USER_PASSWORD: p@55w0rd
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
