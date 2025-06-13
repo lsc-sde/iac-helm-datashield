@@ -3,6 +3,16 @@ entries:
   datashield:
   - apiVersion: v2
     appVersion: 6.4.0
+    created: "2025-06-13T08:55:47.602334625Z"
+    description: Helm chart for DataShield
+    digest: f713b3d3492184cd9db56004b1aa55df1dec58a5e9de03a30b387a5c5eeef557
+    name: datashield
+    type: application
+    urls:
+    - https://github.com/lsc-sde/iac-helm-datashield/releases/download/datashield-0.3.1/datashield-0.3.1.tgz
+    version: 0.3.1
+  - apiVersion: v2
+    appVersion: 6.4.0
     created: "2025-06-13T01:06:00.043202057Z"
     description: Helm chart for DataShield
     digest: 1f2918b92b3537952dbfc4c50c399e3b3e40877cb554c0647349029113eb2c21
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://github.com/lsc-sde/iac-helm-datashield/releases/download/datashield-0.2.0/datashield-0.2.0.tgz
     version: 0.2.0
-generated: "2025-06-13T01:06:00.043215843Z"
+generated: "2025-06-13T08:55:47.602348431Z"
