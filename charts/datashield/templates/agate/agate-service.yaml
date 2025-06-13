@@ -1,0 +1,16 @@
+{{ if .Values.agate.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "datashield.agate.name" . }}
+  labels:
+    app: {{ include "datashield.agate.name" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+  selector:
+    app: {{ include "datashield.agate.name" . }}
+{{ end }}

@@ -1,0 +1,16 @@
+{{ if .Values.mica.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "datashield.mica.name" . }}
+  labels:
+    app: {{ include "datashield.mica.name" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082
+  selector:
+    app: {{ include "datashield.mica.name" . }}
+{{ end }}

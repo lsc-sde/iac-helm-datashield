@@ -5,33 +5,70 @@ metadata:
   name: {{ include "datashield.rock.name" . }}
   labels:
     app: {{ include "datashield.rock.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
 spec:
   replicas: {{ .Values.rock.replicaCount }}
   selector:
     matchLabels:
       app: {{ include "datashield.rock.name" . }}
-  
   template:
     metadata:
       labels:
         app: {{ include "datashield.rock.name" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
     spec:
       containers:
         - name: rock
-          image: {{ .Values.rock.image }}
+          image: "{{ .Values.rock.image.repository }}:{{ .Values.rock.image.tag }}"
+          imagePullPolicy: {{ .Values.rock.image.pullPolicy | default "IfNotPresent" }}
           env:
             - name: ROCK_ADMINISTRATOR_NAME
               value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_NAME }}
             - name: ROCK_ADMINISTRATOR_PASSWORD
-              value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rock.secretName }}
+                  key: ROCK_ADMINISTRATOR_PASSWORD
             - name: ROCK_MANAGER_NAME
               value: {{ .Values.rock.env.ROCK_MANAGER_NAME }}
             - name: ROCK_MANAGER_PASSWORD
-              value: {{ .Values.rock.env.ROCK_MANAGER_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rock.secretName }}
+                  key: ROCK_MANAGER_PASSWORD
             - name: ROCK_USER_NAME
               value: {{ .Values.rock.env.ROCK_USER_NAME }}
             - name: ROCK_USER_PASSWORD
-              value: {{ .Values.rock.env.ROCK_USER_PASSWORD }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.rock.secretName }}
+                  key: ROCK_USER_PASSWORD
           ports:
             - containerPort: 8085
+          resources:
+            requests:
+              cpu: {{ .Values.rock.resources.requests.cpu | default "100m" }}
+              memory: {{ .Values.rock.resources.requests.memory | default "128Mi" }}
+            limits:
+              cpu: {{ .Values.rock.resources.limits.cpu | default "500m" }}
+              memory: {{ .Values.rock.resources.limits.memory | default "512Mi" }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8085
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
 
