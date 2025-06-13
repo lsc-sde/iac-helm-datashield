@@ -3,6 +3,30 @@ entries:
   datashield:
   - apiVersion: v2
     appVersion: 6.4.0
+    created: "2025-06-13T10:01:41.796450321Z"
+    description: A comprehensive Helm chart for DataShield - a platform for privacy-preserving
+      data analysis
+    digest: 47645d9d98381d8ac21bacfb952194291e5b7c84091536997ccca2671057580e
+    home: https://www.datashield.org/
+    keywords:
+    - datashield
+    - privacy-preserving
+    - data-analysis
+    - federated-analysis
+    - opal
+    - rock
+    maintainers:
+    - email: datashield@obiba.org
+      name: DataShield Team
+    name: datashield
+    sources:
+    - https://github.com/datashield
+    type: application
+    urls:
+    - https://github.com/lsc-sde/iac-helm-datashield/releases/download/datashield-0.4.1/datashield-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 6.4.0
     created: "2025-06-13T09:20:11.316156932Z"
     description: A comprehensive Helm chart for DataShield - a platform for privacy-preserving
       data analysis
@@ -65,4 +89,4 @@ entries:
     urls:
     - https://github.com/lsc-sde/iac-helm-datashield/releases/download/datashield-0.2.0/datashield-0.2.0.tgz
     version: 0.2.0
-generated: "2025-06-13T09:20:11.316180707Z"
+generated: "2025-06-13T10:01:41.796474636Z"
