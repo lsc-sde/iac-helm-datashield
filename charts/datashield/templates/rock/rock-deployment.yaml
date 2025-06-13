@@ -23,8 +23,8 @@ spec:
     spec:
       containers:
         - name: rock
-          image: "{{ .Values.rock.image.repository }}:{{ .Values.rock.image.tag }}"
-          imagePullPolicy: {{ .Values.rock.image.pullPolicy | default "IfNotPresent" }}
+          image: {{ .Values.rock.image | quote }}
+          imagePullPolicy: {{ .Values.rock.imagePullPolicy | default "IfNotPresent" }}
           env:
             - name: ROCK_ADMINISTRATOR_NAME
               value: {{ .Values.rock.env.ROCK_ADMINISTRATOR_NAME }}

@@ -6,6 +6,10 @@ agate:
 
 mica:
   enabled: false
+  image: obiba/mica:5.3
+  env:
+    MICA_ADMINISTRATOR_PASSWORD: P@55w0rd
+    JAVA_OPTS: -Xmx2G
 
 mysqldb:
   enabled: false

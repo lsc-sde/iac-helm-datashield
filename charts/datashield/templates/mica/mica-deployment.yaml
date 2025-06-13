@@ -11,7 +11,6 @@ spec:
   selector:
     matchLabels:
       app: {{ include "datashield.mica.name" . }}
-    
   template:
     metadata:
       annotations: {}
@@ -19,19 +18,14 @@ spec:
         app: {{ include "datashield.mica.name" . }}
     spec:
       containers:
-        - image: obiba/mica:5.3
+        - image: {{ .Values.mica.image }}
           name: mica
           resources: {}
-          # command: ["/bin/bash"]
-          # args:
-          #   - "-c"
-          #   - "while true; do echo hello; sleep 10;done"
-            # - "chown -R mica $MICA_HOME; exec gosu mica /opt/mica/bin/start.sh"
           env:
             - name: JAVA_OPTS
-              value: -Xmx2G
+              value: {{ .Values.mica.env.JAVA_OPTS }}
             - name: MICA_ADMINISTRATOR_PASSWORD
-              value: P@55w0rd
+              value: {{ .Values.mica.env.MICA_ADMINISTRATOR_PASSWORD }}
             - name: MONGO_HOST
               value: {{ include "datashield.mongodb.name" . }}
             - name: MONGO_PORT
