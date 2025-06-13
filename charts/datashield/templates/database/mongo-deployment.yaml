@@ -1,3 +1,4 @@
+{{ if .Values.mongodb.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,3 +32,4 @@ spec:
       - name: "mongo-data-dir"
         persistentVolumeClaim:
           claimName: {{ include "datashield.mongodb.name" . }}
+{{ end }}

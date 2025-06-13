@@ -4,10 +4,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ include "datashield.mysqldb.name" . }}
   labels:
-    name: {{ include "datashield.mysqldb.name" . }}
+    app: {{ include "datashield.mysqldb.name" . }}
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:

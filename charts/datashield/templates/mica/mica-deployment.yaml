@@ -40,5 +40,8 @@ spec:
               value: http://opal:8080
             - name: AGATE_URL
               value: http://agate:8081
+          ports:
+            - containerPort: 8082
+              name: http
       restartPolicy: Always
 {{ end }}

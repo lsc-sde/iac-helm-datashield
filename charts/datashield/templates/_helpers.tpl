@@ -85,32 +85,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-
-{{/*
-Secrets
-*/}}
-
-{{- define "datashield.agate.administrator_password.secret" -}}
-{{- if eq .Values.agate.administrator_password.secret "" }}
-{{- printf "%s" .Release.Name }}
-{{- else }}
-{{- printf "%s" .Values.agate.administrator_password.secret }}
-{{- end }}
-{{- end }}
-
-{{- define "datashield.opal.administrator_password.secret" -}}
-{{- if eq .Values.opal.administrator_password.secret "" }}
-{{- printf "%s" .Release.Name }}
-{{- else }}
-{{- printf "%s" .Values.opal.administrator_password.secret }}
-{{- end }}
-{{- end }}
-
-{{- define "datashield.mysqldb.administrator_password.secret" -}}
-{{- if eq .Values.mysqldb.administrator_password.secret "" }}
-{{- printf "%s" .Release.Name }}
-{{- else }}
-{{- printf "%s" .Values.mysqldb.administrator_password.secret }}
-{{- end }}
-{{- end }}

@@ -6,9 +6,9 @@ metadata:
     app: {{ include "datashield.opal.name" . }}
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.opal.pvc.storage }}
+      storage: {{ .Values.opal.pvc.storage | quote }}
   

@@ -35,5 +35,8 @@ spec:
               value: http://opal:8080
             - name: RECAPTCHA_SECRET_KEY
               value: http://agate:8081
+          ports:
+            - containerPort: 8081
+              name: http
       restartPolicy: Always
 {{ end }}
