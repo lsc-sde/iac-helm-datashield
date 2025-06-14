@@ -50,8 +50,8 @@ spec:
           livenessProbe:
             exec:
               command:
-                - mongo
-                - --disableImplicitSessions
+                - mongosh
+                - --quiet
                 - --eval
                 - "db.adminCommand('ping')"
             initialDelaySeconds: 30
@@ -62,8 +62,8 @@ spec:
           readinessProbe:
             exec:
               command:
-                - mongo
-                - --disableImplicitSessions
+                - mongosh
+                - --quiet
                 - --eval
                 - "db.adminCommand('ping')"
             initialDelaySeconds: 5
