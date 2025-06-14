@@ -27,9 +27,9 @@ serviceAccount:
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
+  runAsUser: 10041
+  runAsGroup: 10041
+  fsGroup: 10041
 
 # Security context for containers
 securityContext:
@@ -38,8 +38,8 @@ securityContext:
     - ALL
   readOnlyRootFilesystem: false
   runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
+  runAsUser: 10041
+  runAsGroup: 10041
   allowPrivilegeEscalation: false
 
 # MongoDB configuration
