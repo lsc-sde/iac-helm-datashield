@@ -79,10 +79,14 @@ spec:
               value: {{ .Values.opal.config.httpsPort | quote }}
             - name: org.obiba.opal.server.context-path
               value: {{ .Values.opal.config.contextPath | quote }}
+          {{- if .Values.opal.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.opal.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.opal.readinessProbe }}
           readinessProbe:
             {{- toYaml .Values.opal.readinessProbe | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.opal.resources | nindent 12 }}
           securityContext:
