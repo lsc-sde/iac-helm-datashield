@@ -36,7 +36,7 @@ spec:
             - name: MICA_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.mica.secretName" . }}
                   key: mica-administrator-password
             {{- if .Values.mongodb.enabled }}
             - name: MONGO_HOST

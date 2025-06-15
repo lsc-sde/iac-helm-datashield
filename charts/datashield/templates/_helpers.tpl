@@ -183,3 +183,109 @@ Generate secrets for components
 {{- define "datashield.secretName" -}}
 {{- printf "%s-secrets" (include "datashield.fullname" .) }}
 {{- end }}
+
+{{/*
+Get MongoDB secret name - either existing or generated
+*/}}
+{{- define "datashield.mongodb.secretName" -}}
+{{- if .Values.mongodb.auth.existingSecret -}}
+{{- .Values.mongodb.auth.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get MySQL secret name - either existing or generated
+*/}}
+{{- define "datashield.mysql.secretName" -}}
+{{- if .Values.mysql.auth.existingSecret -}}
+{{- .Values.mysql.auth.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get Opal secret name - either existing or generated
+*/}}
+{{- define "datashield.opal.secretName" -}}
+{{- if .Values.opal.config.existingSecret -}}
+{{- .Values.opal.config.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get Opal demo secret name - either existing or generated
+*/}}
+{{- define "datashield.opal.demo.secretName" -}}
+{{- if .Values.opal.demo.existingSecret -}}
+{{- .Values.opal.demo.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get Rock secret name - either existing or generated
+*/}}
+{{- define "datashield.rock.secretName" -}}
+{{- if .Values.rock.config.existingSecret -}}
+{{- .Values.rock.config.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get Agate secret name - either existing or generated
+*/}}
+{{- define "datashield.agate.secretName" -}}
+{{- if .Values.agate.config.existingSecret -}}
+{{- .Values.agate.config.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get Mica secret name - either existing or generated
+*/}}
+{{- define "datashield.mica.secretName" -}}
+{{- if .Values.mica.config.existingSecret -}}
+{{- .Values.mica.config.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Check if any component needs generated secrets
+*/}}
+{{- define "datashield.needsGeneratedSecrets" -}}
+{{- $needsGenerated := false -}}
+{{- if and .Values.mongodb.enabled .Values.mongodb.auth.enabled (not .Values.mongodb.auth.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- if and .Values.mysql.enabled (not .Values.mysql.auth.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- if and .Values.opal.enabled (not .Values.opal.config.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- if and .Values.opal.enabled .Values.opal.demo.enabled (not .Values.opal.demo.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- if and .Values.rock.enabled (not .Values.rock.config.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- if and .Values.agate.enabled (not .Values.agate.config.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- if and .Values.mica.enabled (not .Values.mica.config.existingSecret) -}}
+{{- $needsGenerated = true -}}
+{{- end -}}
+{{- $needsGenerated -}}
+{{- end -}}

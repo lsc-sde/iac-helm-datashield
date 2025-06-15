@@ -34,7 +34,7 @@ data:
     opal system --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --version
 
     # Add the NORMAL DEMO_USER as defined in the values.yaml
-    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.userName }} --upassword {{ .Values.opal.demo.userPassword }}
+    opal user --user administrator --password $OPAL_ADMINISTRATOR_PASSWORD --add --name {{ .Values.opal.demo.userName }} --upassword $OPAL_DEMO_USER_PASSWORD
     
     ###########################################################################
     # CNSIM DEMO DATA

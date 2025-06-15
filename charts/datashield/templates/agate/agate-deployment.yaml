@@ -34,7 +34,7 @@ spec:
             - name: AGATE_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.agate.secretName" . }}
                   key: agate-administrator-password
             {{- if .Values.mongodb.enabled }}
             - name: MONGO_HOST

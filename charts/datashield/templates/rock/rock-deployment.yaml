@@ -44,21 +44,21 @@ spec:
             - name: ROCK_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.rock.secretName" . }}
                   key: rock-administrator-password
             - name: ROCK_MANAGER_NAME
               value: {{ .Values.rock.config.managerName }}
             - name: ROCK_MANAGER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.rock.secretName" . }}
                   key: rock-manager-password
             - name: ROCK_USER_NAME
               value: {{ .Values.rock.config.userName }}
             - name: ROCK_USER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.rock.secretName" . }}
                   key: rock-user-password
           {{- if .Values.rock.livenessProbe }}
           livenessProbe:

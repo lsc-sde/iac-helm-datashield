@@ -37,15 +37,13 @@ spec:
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.mongodb.secretName" . }}
                   key: mongodb-root-password
-            {{- if .Values.mongodb.auth.username }}
             - name: MONGO_INITDB_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.mongodb.secretName" . }}
                   key: mongodb-database
-            {{- end }}
           {{- end }}
           livenessProbe:
             exec:

@@ -13,6 +13,15 @@ DataShield is a suite of software packages that enable privacy-preserving federa
 - **Agate**: Optional authentication and authorization server
 - **Mica**: Optional metadata catalog and data discovery portal
 
+## Security
+
+⚠️ **Important Security Update**: This chart now implements secure secret management. Plaintext passwords are no longer supported in `values.yaml`. See [SECURITY.md](SECURITY.md) for detailed information about:
+
+- Automatic random secret generation
+- Using external Kubernetes secrets
+- Migration from previous versions
+- Best practices for secret management
+
 ## Prerequisites
 
 - Kubernetes 1.19+

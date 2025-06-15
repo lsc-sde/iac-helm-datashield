@@ -51,23 +51,23 @@ spec:
             - name: MYSQLDATA_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.mysql.secretName" . }}
                   key: mysql-database
             - name: MYSQLDATA_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.mysql.secretName" . }}
                   key: mysql-username
             - name: MYSQLDATA_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.mysql.secretName" . }}
                   key: mysql-password
             {{- end }}
             - name: OPAL_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.secretName" . }}
+                  name: {{ include "datashield.opal.secretName" . }}
                   key: opal-administrator-password
             {{- if .Values.rock.enabled }}
             - name: ROCK_HOSTS
@@ -79,6 +79,13 @@ spec:
               value: {{ .Values.opal.config.httpsPort | quote }}
             - name: org.obiba.opal.server.context-path
               value: {{ .Values.opal.config.contextPath | quote }}
+            {{- if .Values.opal.demo.enabled }}
+            - name: OPAL_DEMO_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.opal.demo.secretName" . }}
+                  key: opal-demo-user-password
+            {{- end }}
           {{- if .Values.opal.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.opal.livenessProbe | nindent 12 }}

@@ -77,10 +77,11 @@ mongodb:
   # MongoDB authentication
   auth:
     enabled: false
-    rootPassword: ""
-    username: ""
-    password: ""
-    database: ""
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for MongoDB
+    existingSecret: ""
+    # Default values for generated secrets (used only when existingSecret is not provided)
+    database: "mongodb"
 
 # MySQL configuration
 mysql:
@@ -116,10 +117,12 @@ mysql:
   
   # MySQL configuration
   auth:
-    rootPassword: "secure-root-password"
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for MySQL
+    existingSecret: ""
+    # Default values for generated secrets (used only when existingSecret is not provided)
     database: "dsdb"
     username: "dsdb_user"
-    password: "secure-user-password"
 
 # Opal configuration
 opal:
@@ -160,7 +163,9 @@ opal:
   
   # Opal configuration
   config:
-    administratorPassword: "secure-admin-password"
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for Opal
+    existingSecret: ""
     csrfAllowed: "datashield.local"
     httpsPort: "-1"
     contextPath: ""
@@ -189,8 +194,10 @@ opal:
   # Demo data configuration
   demo:
     enabled: true
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for demo user
+    existingSecret: ""
     userName: "dsuser"
-    userPassword: "demo-password"
     projectName: "CNSIM"
     tableName: "CNSIM99"
     sourceDataUrl: "https://raw.githubusercontent.com/OllyButters/ds_data/main/CNSIM/CNSIM1.csv"
@@ -230,12 +237,12 @@ rock:
   
   # Rock configuration
   config:
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for Rock
+    existingSecret: ""
     administratorName: "admin"
-    administratorPassword: "secure-admin-password"
     managerName: "manager"
-    managerPassword: "secure-manager-password"
     userName: "user"
-    userPassword: "secure-user-password"
   
   # Health checks
   livenessProbe:
@@ -282,7 +289,9 @@ agate:
   
   # Agate configuration
   config:
-    administratorPassword: "secure-admin-password"
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for Agate
+    existingSecret: ""
 
 # Mica configuration
 mica:
@@ -312,7 +321,9 @@ mica:
   
   # Mica configuration
   config:
-    administratorPassword: "secure-admin-password"
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for Mica
+    existingSecret: ""
     javaOpts: "-Xmx2G"
 
 # Ingress configuration
