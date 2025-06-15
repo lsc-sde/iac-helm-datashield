@@ -165,6 +165,27 @@ opal:
     httpsPort: "-1"
     contextPath: "/opal"
   
+  # Health check probes
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+    successThreshold: 1
+  
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
   # Demo data configuration
   demo:
     enabled: true

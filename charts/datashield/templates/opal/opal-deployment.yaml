@@ -80,21 +80,9 @@ spec:
             - name: org.obiba.opal.server.context-path
               value: {{ .Values.opal.config.contextPath | quote }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 120
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
+            {{- toYaml .Values.opal.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            {{- toYaml .Values.opal.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.opal.resources | nindent 12 }}
           securityContext:
