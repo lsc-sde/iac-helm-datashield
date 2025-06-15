@@ -163,7 +163,7 @@ opal:
     administratorPassword: "secure-admin-password"
     csrfAllowed: "datashield.local"
     httpsPort: "-1"
-    contextPath: "/opal"
+    contextPath: ""
   
   # Health check probes
   livenessProbe:
@@ -320,14 +320,12 @@ ingress:
   enabled: true
   className: "nginx"
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-    nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 64m
   hosts:
     - host: datashield.local
       paths:
-        - path: /opal(/|$)(.*)
-          pathType: ImplementationSpecific
+        - path: /
+          pathType: Prefix
           service:
             name: opal
             port: 8080
