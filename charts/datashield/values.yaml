@@ -319,20 +319,12 @@ mica:
 ingress:
   enabled: true
   className: "nginx"
+  # Hostname for the ingress
+  host: datashield.local
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 64m
-  hosts:
-    - host: datashield.local
-      paths:
-        - path: /
-          pathType: Prefix
-          service:
-            name: opal
-            port: 8080
   tls:
     - secretName: datashield-tls
-      hosts:
-        - datashield.local
 
 # Autoscaling configuration (disabled by default)
 autoscaling:

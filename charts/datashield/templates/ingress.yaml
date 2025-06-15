@@ -26,34 +26,26 @@ spec:
   {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
     - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ (index .Values.ingress.tls 0).secretName }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ .Values.ingress.host | quote }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{ .pathType }}
+          - path: /
+            {{- if semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion }}
+            pathType: Prefix
             {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ include "datashield.opal.name" $ }}
+                name: {{ include "datashield.opal.name" . }}
                 port:
-                  number: {{ .service.port }}
+                  number: {{ .Values.opal.service.port }}
               {{- else }}
-              serviceName: {{ include "datashield.opal.name" $ }}
-              servicePort: {{ .service.port }}
+              serviceName: {{ include "datashield.opal.name" . }}
+              servicePort: {{ .Values.opal.service.port }}
               {{- end }}
-          {{- end }}
-    {{- end }}
 {{- end }}
