@@ -26,6 +26,14 @@ spec:
         - name: opal
           image: "{{ .Values.opal.image.repository }}:{{ .Values.opal.image.tag }}"
           imagePullPolicy: {{ .Values.opal.image.pullPolicy }}
+          {{- if .Values.opal.command }}
+          command:
+            {{- toYaml .Values.opal.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.opal.args }}
+          args:
+            {{- toYaml .Values.opal.args | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 8080

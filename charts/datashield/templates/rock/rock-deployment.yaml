@@ -26,6 +26,14 @@ spec:
         - name: rock
           image: "{{ .Values.rock.image.repository }}:{{ .Values.rock.image.tag }}"
           imagePullPolicy: {{ .Values.rock.image.pullPolicy }}
+          {{- if .Values.rock.command }}
+          command:
+            {{- toYaml .Values.rock.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.rock.args }}
+          args:
+            {{- toYaml .Values.rock.args | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 8085

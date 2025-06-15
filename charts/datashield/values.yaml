@@ -130,6 +130,11 @@ opal:
     tag: "5.1.4"
     pullPolicy: IfNotPresent
   
+  # Command and args to override Docker entrypoint for Azure File share compatibility
+  # Uncomment these lines when using Azure File shares to bypass chown operations
+  # command: ["/bin/bash"]
+  # args: ["-c", "exec gosu opal /opt/opal/bin/start.sh"]
+  
   service:
     type: ClusterIP
     port: 8080
@@ -180,6 +185,10 @@ rock:
     repository: obiba/rock
     tag: "2.1.4"
     pullPolicy: IfNotPresent
+  
+  # Command and args to override Docker entrypoint if needed
+  # command: ["/bin/bash"]
+  # args: ["-c", "exec /usr/local/bin/docker-entrypoint.sh"]
   
   service:
     type: ClusterIP
