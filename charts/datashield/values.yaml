@@ -127,7 +127,8 @@ mysql:
 # Opal configuration
 opal:
   enabled: true
-  replicaCount: 1
+  # Note: OPAL uses OrientDB which doesn't support concurrent access
+  # This is now a StatefulSet with exactly 1 replica to prevent database corruption
   image:
     repository: obiba/opal
     tag: "5.1.4"
@@ -145,6 +146,8 @@ opal:
   
   persistence:
     enabled: true
+    # ReadWriteOnce ensures only one pod can mount the volume at a time
+    # This is critical for OrientDB which doesn't support concurrent access
     accessMode: ReadWriteOnce
     size: 2Gi
     annotations: {}

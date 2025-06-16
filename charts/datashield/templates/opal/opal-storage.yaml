@@ -1,4 +1,9 @@
-{{- if and .Values.opal.enabled .Values.opal.persistence.enabled }}
+{{- if and .Values.opal.enabled .Values.opal.persistence.enabled false }}
+{{/* 
+This PVC is no longer used since OPAL is now a StatefulSet with volumeClaimTemplates.
+This file is kept for backwards compatibility but is disabled.
+The StatefulSet manages its own PVCs through volumeClaimTemplates.
+*/}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

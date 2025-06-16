@@ -1,15 +1,35 @@
+{{/*
+OPAL StatefulSet Configuration
+==============================
+This is a StatefulSet (not a Deployment) because OPAL uses OrientDB which 
+does not support concurrent access from multiple pods. The database will 
+become corrupted if multiple pods try to access it simultaneously.
+
+Key features:
+- Exactly 1 replica (hardcoded)
+- OrderedReady pod management
+- Rolling update with maxUnavailable: 0
+- Dedicated PVC per pod through volumeClaimTemplates
+- ReadWriteOnce volume access mode
+*/}}
 {{- if .Values.opal.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "datashield.opal.name" . }}
   labels:
     {{- include "datashield.opal.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.opal.replicaCount }}
+  serviceName: {{ include "datashield.opal.name" . }}
+  replicas: 1
   selector:
     matchLabels:
       {{- include "datashield.opal.selectorLabels" . | nindent 6 }}
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -100,7 +120,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{- if .Values.opal.persistence.enabled }}
           volumeMounts:
-            - name: opal-storage
+            - name: opal-data
               mountPath: /srv
             {{- if .Values.opal.demo.enabled }}
             - name: opal-demo-config
@@ -117,11 +137,6 @@ spec:
                   - /demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1
           {{- end }}
       volumes:
-        {{- if .Values.opal.persistence.enabled }}
-        - name: opal-storage
-          persistentVolumeClaim:
-            claimName: {{ include "datashield.opal.name" . }}
-        {{- end }}
         {{- if .Values.opal.demo.enabled }}
         - name: opal-demo-config
           configMap:
@@ -140,4 +155,24 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- if .Values.opal.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: opal-data
+      labels:
+        {{- include "datashield.opal.labels" . | nindent 8 }}
+      {{- with .Values.opal.persistence.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      accessModes:
+        - {{ .Values.opal.persistence.accessMode | quote }}
+      {{- if .Values.global.storageClass }}
+      storageClassName: {{ .Values.global.storageClass | quote }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.opal.persistence.size | quote }}
+  {{- end }}
 {{- end }}

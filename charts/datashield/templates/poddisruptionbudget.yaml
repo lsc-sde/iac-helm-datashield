@@ -16,3 +16,19 @@ spec:
     matchLabels:
       {{- include "datashield.selectorLabels" . | nindent 6 }}
 {{- end }}
+---
+{{- if .Values.opal.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "datashield.opal.name" . }}
+  labels:
+    {{- include "datashield.opal.labels" . | nindent 4 }}
+spec:
+  # Allow 0 unavailable to prevent disruption during maintenance
+  # but allow voluntary disruption for updates
+  maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "datashield.opal.selectorLabels" . | nindent 6 }}
+{{- end }}
