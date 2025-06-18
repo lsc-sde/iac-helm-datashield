@@ -59,53 +59,159 @@ spec:
               containerPort: 8080
               protocol: TCP
           env:
-            {{- if .Values.mongodb.enabled }}
+            # MongoDB connection
             - name: MONGO_HOST
-              value: {{ include "datashield.mongodb.name" . }}
+              {{- if .Values.externalDatabases.mongodb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mongodb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mongodb.existingSecretKeys.host }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mongodb.host | quote }}
+              {{- end }}
             - name: MONGO_PORT
-              value: {{ .Values.mongodb.service.port | quote }}
-            {{- end }}
-            {{- if .Values.mysql.enabled }}
+              {{- if .Values.externalDatabases.mongodb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mongodb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mongodb.existingSecretKeys.port }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mongodb.port | quote }}
+              {{- end }}
+            - name: MONGO_USER
+              {{- if .Values.externalDatabases.mongodb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mongodb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mongodb.existingSecretKeys.user }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mongodb.user | quote }}
+              {{- end }}
+            - name: MONGO_PASSWORD
+              {{- if .Values.externalDatabases.mongodb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mongodb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mongodb.existingSecretKeys.password }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mongodb.password | quote }}
+              {{- end }}
+            
+            # MySQL connection
             - name: MYSQLDATA_HOST
-              value: "{{ include "datashield.mysql.name" . }}:{{ .Values.mysql.service.port }}"
+              {{- if .Values.externalDatabases.mysql.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mysql.existingSecret }}
+                  key: {{ .Values.externalDatabases.mysql.existingSecretKeys.host }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mysql.host | quote }}
+              {{- end }}
             - name: MYSQLDATA_DATABASE
+              {{- if .Values.externalDatabases.mysql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.mysql.secretName" . }}
-                  key: mysql-database
+                  name: {{ .Values.externalDatabases.mysql.existingSecret }}
+                  key: {{ .Values.externalDatabases.mysql.existingSecretKeys.database }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mysql.database | quote }}
+              {{- end }}
             - name: MYSQLDATA_USER
+              {{- if .Values.externalDatabases.mysql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.mysql.secretName" . }}
-                  key: mysql-username
+                  name: {{ .Values.externalDatabases.mysql.existingSecret }}
+                  key: {{ .Values.externalDatabases.mysql.existingSecretKeys.user }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mysql.user | quote }}
+              {{- end }}
             - name: MYSQLDATA_PASSWORD
+              {{- if .Values.externalDatabases.mysql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.mysql.secretName" . }}
-                  key: mysql-password
-            {{- end }}
-            {{- if .Values.opal.postgres.enabled }}
+                  name: {{ .Values.externalDatabases.mysql.existingSecret }}
+                  key: {{ .Values.externalDatabases.mysql.existingSecretKeys.password }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mysql.password | quote }}
+              {{- end }}
+            
+            # MariaDB connection
+            - name: MARIADBDATA_HOST
+              {{- if .Values.externalDatabases.mariadb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mariadb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mariadb.existingSecretKeys.host }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mariadb.host | quote }}
+              {{- end }}
+            - name: MARIADBDATA_DATABASE
+              {{- if .Values.externalDatabases.mariadb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mariadb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mariadb.existingSecretKeys.database }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mariadb.database | quote }}
+              {{- end }}
+            - name: MARIADBDATA_USER
+              {{- if .Values.externalDatabases.mariadb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mariadb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mariadb.existingSecretKeys.user }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mariadb.user | quote }}
+              {{- end }}
+            - name: MARIADBDATA_PASSWORD
+              {{- if .Values.externalDatabases.mariadb.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externalDatabases.mariadb.existingSecret }}
+                  key: {{ .Values.externalDatabases.mariadb.existingSecretKeys.password }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.mariadb.password | quote }}
+              {{- end }}
+            
+            # PostgreSQL connection
             - name: POSTGRESDATA_HOST
+              {{- if .Values.externalDatabases.postgresql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.opal.postgres.secretName" . }}
-                  key: postgres-host
+                  name: {{ .Values.externalDatabases.postgresql.existingSecret }}
+                  key: {{ .Values.externalDatabases.postgresql.existingSecretKeys.host }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.postgresql.host | quote }}
+              {{- end }}
             - name: POSTGRESDATA_DATABASE
+              {{- if .Values.externalDatabases.postgresql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.opal.postgres.secretName" . }}
-                  key: postgres-database
+                  name: {{ .Values.externalDatabases.postgresql.existingSecret }}
+                  key: {{ .Values.externalDatabases.postgresql.existingSecretKeys.database }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.postgresql.database | quote }}
+              {{- end }}
             - name: POSTGRESDATA_USER
+              {{- if .Values.externalDatabases.postgresql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.opal.postgres.secretName" . }}
-                  key: postgres-username
+                  name: {{ .Values.externalDatabases.postgresql.existingSecret }}
+                  key: {{ .Values.externalDatabases.postgresql.existingSecretKeys.user }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.postgresql.user | quote }}
+              {{- end }}
             - name: POSTGRESDATA_PASSWORD
+              {{- if .Values.externalDatabases.postgresql.existingSecret }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "datashield.opal.postgres.secretName" . }}
-                  key: postgres-password
-            {{- end }}
+                  name: {{ .Values.externalDatabases.postgresql.existingSecret }}
+                  key: {{ .Values.externalDatabases.postgresql.existingSecretKeys.password }}
+              {{- else }}
+              value: {{ .Values.externalDatabases.postgresql.password | quote }}
+              {{- end }}
+            
+            # Opal administrator password
             - name: OPAL_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:

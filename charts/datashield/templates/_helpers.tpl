@@ -64,14 +64,6 @@ Create the name of the service account to use
 {{/*
 Component specific names
 */}}
-{{- define "datashield.mongodb.name" -}}
-{{- printf "%s-mongodb" (include "datashield.fullname" .) }}
-{{- end }}
-
-{{- define "datashield.mysql.name" -}}
-{{- printf "%s-mysql" (include "datashield.fullname" .) }}
-{{- end }}
-
 {{- define "datashield.opal.name" -}}
 {{- printf "%s-opal" (include "datashield.fullname" .) }}
 {{- end }}
@@ -91,16 +83,6 @@ Component specific names
 {{/*
 Component specific labels
 */}}
-{{- define "datashield.mongodb.labels" -}}
-{{ include "datashield.labels" . }}
-app.kubernetes.io/component: mongodb
-{{- end }}
-
-{{- define "datashield.mysql.labels" -}}
-{{ include "datashield.labels" . }}
-app.kubernetes.io/component: mysql
-{{- end }}
-
 {{- define "datashield.opal.labels" -}}
 {{ include "datashield.labels" . }}
 app.kubernetes.io/component: opal
@@ -124,16 +106,6 @@ app.kubernetes.io/component: mica
 {{/*
 Component specific selector labels
 */}}
-{{- define "datashield.mongodb.selectorLabels" -}}
-{{ include "datashield.selectorLabels" . }}
-app.kubernetes.io/component: mongodb
-{{- end }}
-
-{{- define "datashield.mysql.selectorLabels" -}}
-{{ include "datashield.selectorLabels" . }}
-app.kubernetes.io/component: mysql
-{{- end }}
-
 {{- define "datashield.opal.selectorLabels" -}}
 {{ include "datashield.selectorLabels" . }}
 app.kubernetes.io/component: opal
@@ -182,39 +154,6 @@ Generate secrets for components
 */}}
 {{- define "datashield.secretName" -}}
 {{- printf "%s-secrets" (include "datashield.fullname" .) }}
-{{- end }}
-
-{{/*
-Get MongoDB secret name - either existing or generated
-*/}}
-{{- define "datashield.mongodb.secretName" -}}
-{{- if .Values.mongodb.auth.existingSecret -}}
-{{- .Values.mongodb.auth.existingSecret -}}
-{{- else -}}
-{{- include "datashield.secretName" . -}}
-{{- end -}}
-{{- end }}
-
-{{/*
-Get MySQL secret name - either existing or generated
-*/}}
-{{- define "datashield.mysql.secretName" -}}
-{{- if .Values.mysql.auth.existingSecret -}}
-{{- .Values.mysql.auth.existingSecret -}}
-{{- else -}}
-{{- include "datashield.secretName" . -}}
-{{- end -}}
-{{- end }}
-
-{{/*
-Get PostgreSQL secret name - either existing or generated
-*/}}
-{{- define "datashield.postgresql.secretName" -}}
-{{- if .Values.postgresql.auth.existingSecret -}}
-{{- .Values.postgresql.auth.existingSecret -}}
-{{- else -}}
-{{- include "datashield.secretName" . -}}
-{{- end -}}
 {{- end }}
 
 {{/*
@@ -273,27 +212,10 @@ Get Mica secret name - either existing or generated
 {{- end }}
 
 {{/*
-Get OPAL PostgreSQL secret name - either existing or generated
-*/}}
-{{- define "datashield.opal.postgres.secretName" -}}
-{{- if .Values.opal.postgres.existingSecret -}}
-{{- .Values.opal.postgres.existingSecret -}}
-{{- else -}}
-{{- include "datashield.secretName" . -}}
-{{- end -}}
-{{- end }}
-
-{{/*
 Check if any component needs generated secrets
 */}}
 {{- define "datashield.needsGeneratedSecrets" -}}
 {{- $needsGenerated := false -}}
-{{- if and .Values.mongodb.enabled .Values.mongodb.auth.enabled (not .Values.mongodb.auth.existingSecret) -}}
-{{- $needsGenerated = true -}}
-{{- end -}}
-{{- if and .Values.mysql.enabled (not .Values.mysql.auth.existingSecret) -}}
-{{- $needsGenerated = true -}}
-{{- end -}}
 {{- if and .Values.opal.enabled (not .Values.opal.config.existingSecret) -}}
 {{- $needsGenerated = true -}}
 {{- end -}}

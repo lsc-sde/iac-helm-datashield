@@ -42,99 +42,75 @@ securityContext:
   runAsGroup: 10041
   allowPrivilegeEscalation: false
 
-# MongoDB configuration
-mongodb:
-  enabled: true
-  replicaCount: 1
-  image:
-    repository: mongo
-    tag: "6.0.13"
-    pullPolicy: IfNotPresent
-  
-  service:
-    type: ClusterIP
+# External Database Configuration for Opal
+# Users should deploy databases using well-maintained Helm charts (e.g., Bitnami)
+# and configure the connection details below
+externalDatabases:
+  # MongoDB connection settings
+  mongodb:
+    host: "mongo"
     port: 27017
-    annotations: {}
-  
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    size: 8Gi
-    annotations: {}
-  
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  
-  # MongoDB authentication
-  auth:
-    enabled: false
-    # External secret reference (if using existing Kubernetes secrets)
-    # If provided, no random secrets will be generated for MongoDB
+    user: "root"
+    password: "example"
+    # Optional: Reference to an existing Kubernetes secret containing connection details
+    # If provided, the above values will be ignored
     existingSecret: ""
-    # Default values for generated secrets (used only when existingSecret is not provided)
-    database: "mongodb"
-
-# MySQL configuration
-mysql:
-  enabled: false
-  replicaCount: 1
-  image:
-    repository: mysql
-    tag: "8.0.35"
-    pullPolicy: IfNotPresent
+    existingSecretKeys:
+      host: "host"
+      port: "port" 
+      user: "user"
+      password: "password"
   
-  service:
-    type: ClusterIP
+  # MySQL connection settings
+  mysql:
+    host: "mysqldata"
     port: 3306
-    annotations: {}
-  
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    size: 8Gi
-    annotations: {}
-  
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  
-  # MySQL configuration
-  auth:
-    # External secret reference (if using existing Kubernetes secrets)
-    # If provided, no random secrets will be generated for MySQL
+    database: "opal"
+    user: "opal"
+    password: "password"
+    # Optional: Reference to an existing Kubernetes secret containing connection details
+    # If provided, the above values will be ignored
     existingSecret: ""
-    # Default values for generated secrets (used only when existingSecret is not provided)
-    database: "dsdb"
-    username: "dsdb_user"
-
-# PostgreSQL configuration - The user is expected to provide an existing PostgreSQL database
-postgresql:
-  enabled: false
-  # PostgreSQL configuration
-  auth:
-    # External secret reference (if using existing Kubernetes secrets)
-    # If provided, no random secrets will be generated for PostgreSQL
+    existingSecretKeys:
+      host: "host"
+      port: "port"
+      database: "database"
+      user: "user"
+      password: "password"
+  
+  # MariaDB connection settings  
+  mariadb:
+    host: "mariadbdata"
+    port: 3306
+    database: "opal"
+    user: "opal"
+    password: "password"
+    # Optional: Reference to an existing Kubernetes secret containing connection details
+    # If provided, the above values will be ignored
     existingSecret: ""
-    # Default values for generated secrets (used only when existingSecret is not provided)
-    database: "dsdb"
-    username: "dsdb_user"
+    existingSecretKeys:
+      host: "host"
+      port: "port"
+      database: "database"
+      user: "user"
+      password: "password"
+  
+  # PostgreSQL connection settings
+  postgresql:
+    host: "postgresdata"
+    port: 5432
+    database: "opal"
+    user: "opal"
+    password: "password"
+    # Optional: Reference to an existing Kubernetes secret containing connection details
+    # If provided, the above values will be ignored
+    existingSecret: ""
+    existingSecretKeys:
+      host: "host"
+      port: "port"
+      database: "database"
+      user: "user"
+      password: "password"
 
 # Opal configuration
 opal:
@@ -184,6 +160,8 @@ opal:
     csrfAllowed: "datashield.local"
     httpsPort: "-1"
     contextPath: ""
+    # Administrator password for Opal
+    administratorPassword: "password"
   
   # Health check probes
   livenessProbe:

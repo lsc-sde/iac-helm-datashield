@@ -23,17 +23,22 @@
 
 2. Default administrator credentials:
    Username: administrator
+   {{- if .Values.opal.config.existingSecret }}
+   Password: <stored in secret: {{ .Values.opal.config.existingSecret }}>
+   {{- else }}
    Password: {{ .Values.opal.config.administratorPassword }}
+   {{- end }}
    
    Note: Change the default password immediately in production!
 
-3. Component Status:
-{{- if .Values.mongodb.enabled }}
-   - MongoDB: Enabled
-{{- end }}
-{{- if .Values.mysql.enabled }}
-   - MySQL: Enabled
-{{- end }}
+3. External Database Configuration:
+   DataShield requires external databases. Verify your external databases are running:
+   - MongoDB: {{ .Values.externalDatabases.mongodb.host }}:{{ .Values.externalDatabases.mongodb.port }}
+   - MySQL: {{ .Values.externalDatabases.mysql.host }}:{{ .Values.externalDatabases.mysql.port }}
+   - MariaDB: {{ .Values.externalDatabases.mariadb.host }}:{{ .Values.externalDatabases.mariadb.port }}
+   - PostgreSQL: {{ .Values.externalDatabases.postgresql.host }}:{{ .Values.externalDatabases.postgresql.port }}
+
+4. Component Status:
 {{- if .Values.opal.enabled }}
    - Opal: Enabled
 {{- end }}
@@ -47,14 +52,14 @@
    - Mica: Enabled
 {{- end }}
 
-4. To check the status of your deployment:
+5. To check the status of your deployment:
    kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
 
-5. To view logs:
+6. To view logs:
    kubectl logs -n {{ .Release.Namespace }} deployment/{{ include "datashield.opal.name" . }}
 
 {{- if .Values.opal.demo.enabled }}
-6. Demo Data:
+7. Demo Data:
    Demo data will be automatically loaded into Opal after startup.
    Check the logs for progress: kubectl logs -n {{ .Release.Namespace }} deployment/{{ include "datashield.opal.name" . }}
 {{- end }}

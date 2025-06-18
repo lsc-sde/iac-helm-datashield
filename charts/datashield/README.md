@@ -8,10 +8,10 @@ DataShield is a suite of software packages that enable privacy-preserving federa
 
 - **Opal**: Data repository and analysis server
 - **Rock**: R server for DataShield analysis
-- **MongoDB**: Primary database for metadata and configurations
-- **MySQL**: Optional relational database for data storage
 - **Agate**: Optional authentication and authorization server
 - **Mica**: Optional metadata catalog and data discovery portal
+
+**Database Requirements**: This chart expects external databases to be deployed separately using well-maintained Helm charts (e.g., Bitnami). The chart provides configuration options to connect Opal to your existing MongoDB, MySQL, MariaDB, and PostgreSQL instances.
 
 ## Security
 
@@ -30,16 +30,51 @@ DataShield is a suite of software packages that enable privacy-preserving federa
 
 ## Installing the Chart
 
-To install the chart with the release name `datashield`:
+### Prerequisites
+
+1. **Deploy External Databases**: Before installing DataShield, deploy your required databases using well-maintained Helm charts:
+
+```bash
+# Example: Deploy MongoDB using Bitnami chart
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install mongodb bitnami/mongodb \
+  --set auth.rootUser=root \
+  --set auth.rootPassword=example
+
+# Example: Deploy MySQL using Bitnami chart  
+helm install mysql bitnami/mysql \
+  --set auth.rootPassword=password \
+  --set auth.database=opal \
+  --set auth.username=opal \
+  --set auth.password=password
+```
+
+2. **Install DataShield**: Once your databases are running, install the DataShield chart:
 
 ```bash
 helm install datashield ./datashield
 ```
 
-To install with custom values:
+To install with custom database connection values:
 
 ```bash
 helm install datashield ./datashield -f my-values.yaml
+```
+
+Example `my-values.yaml`:
+```yaml
+externalDatabases:
+  mongodb:
+    host: "mongodb"
+    port: 27017
+    user: "root" 
+    password: "example"
+  mysql:
+    host: "mysql"
+    port: 3306
+    database: "opal"
+    user: "opal"
+    password: "password"
 ```
 
 ## Uninstalling the Chart
@@ -85,49 +120,41 @@ The following table lists the configurable parameters and their default values.
 | `securityContext.runAsGroup` | Container group ID | `1000` |
 | `securityContext.allowPrivilegeEscalation` | Allow privilege escalation | `false` |
 
-### MongoDB Configuration
+### External Database Configuration
+
+DataShield requires external databases to be deployed separately. Configure the connection details below.
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `mongodb.enabled` | Enable MongoDB deployment | `true` |
-| `mongodb.replicaCount` | Number of MongoDB replicas | `1` |
-| `mongodb.image.repository` | MongoDB image repository | `mongo` |
-| `mongodb.image.tag` | MongoDB image tag | `6.0.13` |
-| `mongodb.image.pullPolicy` | MongoDB image pull policy | `IfNotPresent` |
-| `mongodb.service.type` | MongoDB service type | `ClusterIP` |
-| `mongodb.service.port` | MongoDB service port | `27017` |
-| `mongodb.persistence.enabled` | Enable MongoDB persistence | `true` |
-| `mongodb.persistence.size` | MongoDB persistent volume size | `8Gi` |
-| `mongodb.persistence.accessMode` | MongoDB persistent volume access mode | `ReadWriteOnce` |
-| `mongodb.resources.limits.cpu` | MongoDB CPU limit | `1000m` |
-| `mongodb.resources.limits.memory` | MongoDB memory limit | `1Gi` |
-| `mongodb.resources.requests.cpu` | MongoDB CPU request | `500m` |
-| `mongodb.resources.requests.memory` | MongoDB memory request | `512Mi` |
-
-### MySQL Configuration
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `mysql.enabled` | Enable MySQL deployment | `false` |
-| `mysql.replicaCount` | Number of MySQL replicas | `1` |
-| `mysql.image.repository` | MySQL image repository | `mysql` |
-| `mysql.image.tag` | MySQL image tag | `8.0.35` |
-| `mysql.image.pullPolicy` | MySQL image pull policy | `IfNotPresent` |
-| `mysql.service.type` | MySQL service type | `ClusterIP` |
-| `mysql.service.port` | MySQL service port | `3306` |
-| `mysql.persistence.enabled` | Enable MySQL persistence | `true` |
-| `mysql.persistence.size` | MySQL persistent volume size | `8Gi` |
-| `mysql.auth.rootPassword` | MySQL root password | `secure-root-password` |
-| `mysql.auth.database` | MySQL database name | `dsdb` |
-| `mysql.auth.username` | MySQL username | `dsdb_user` |
-| `mysql.auth.password` | MySQL user password | `secure-user-password` |
+| `externalDatabases.mongodb.host` | MongoDB hostname | `mongo` |
+| `externalDatabases.mongodb.port` | MongoDB port | `27017` |
+| `externalDatabases.mongodb.user` | MongoDB username | `root` |
+| `externalDatabases.mongodb.password` | MongoDB password | `example` |
+| `externalDatabases.mongodb.existingSecret` | Use existing secret for MongoDB | `""` |
+| `externalDatabases.mysql.host` | MySQL hostname | `mysqldata` |
+| `externalDatabases.mysql.port` | MySQL port | `3306` |
+| `externalDatabases.mysql.database` | MySQL database name | `opal` |
+| `externalDatabases.mysql.user` | MySQL username | `opal` |
+| `externalDatabases.mysql.password` | MySQL password | `password` |
+| `externalDatabases.mysql.existingSecret` | Use existing secret for MySQL | `""` |
+| `externalDatabases.mariadb.host` | MariaDB hostname | `mariadbdata` |
+| `externalDatabases.mariadb.port` | MariaDB port | `3306` |
+| `externalDatabases.mariadb.database` | MariaDB database name | `opal` |
+| `externalDatabases.mariadb.user` | MariaDB username | `opal` |
+| `externalDatabases.mariadb.password` | MariaDB password | `password` |
+| `externalDatabases.mariadb.existingSecret` | Use existing secret for MariaDB | `""` |
+| `externalDatabases.postgresql.host` | PostgreSQL hostname | `postgresdata` |
+| `externalDatabases.postgresql.port` | PostgreSQL port | `5432` |
+| `externalDatabases.postgresql.database` | PostgreSQL database name | `opal` |
+| `externalDatabases.postgresql.user` | PostgreSQL username | `opal` |
+| `externalDatabases.postgresql.password` | PostgreSQL password | `password` |
+| `externalDatabases.postgresql.existingSecret` | Use existing secret for PostgreSQL | `""` |
 
 ### Opal Configuration
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `opal.enabled` | Enable Opal deployment | `true` |
-| `opal.replicaCount` | Number of Opal replicas | `1` |
 | `opal.image.repository` | Opal image repository | `obiba/opal` |
 | `opal.image.tag` | Opal image tag | `5.1.4` |
 | `opal.image.pullPolicy` | Opal image pull policy | `IfNotPresent` |
@@ -135,11 +162,11 @@ The following table lists the configurable parameters and their default values.
 | `opal.service.port` | Opal service port | `8080` |
 | `opal.persistence.enabled` | Enable Opal persistence | `true` |
 | `opal.persistence.size` | Opal persistent volume size | `2Gi` |
-| `opal.config.administratorPassword` | Opal administrator password | `secure-admin-password` |
+| `opal.config.administratorPassword` | Opal administrator password | `password` |
+| `opal.config.existingSecret` | Use existing secret for Opal config | `""` |
 | `opal.config.csrfAllowed` | CSRF allowed hosts | `datashield.local` |
 | `opal.demo.enabled` | Enable demo data loading | `true` |
 | `opal.demo.userName` | Demo user name | `dsuser` |
-| `opal.demo.userPassword` | Demo user password | `demo-password` |
 
 ### Rock Configuration
 
@@ -173,50 +200,97 @@ The following table lists the configurable parameters and their default values.
 helm install datashield ./datashield
 ```
 
-### Installation with Custom Database Passwords
+### Installation Examples
+
+#### Basic Installation with External Databases
+
+1. Deploy MongoDB using Bitnami chart:
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install mongodb bitnami/mongodb \
+  --set auth.rootUser=root \
+  --set auth.rootPassword=example
+```
+
+2. Deploy DataShield:
+```bash
+helm install datashield ./datashield
+```
+
+#### Installation with Custom Database Connection
 
 ```yaml
-# custom-values.yaml
-mongodb:
-  auth:
-    enabled: true
-    rootPassword: "my-secure-mongo-password"
+# custom-db-values.yaml
+externalDatabases:
+  mongodb:
+    host: "my-mongodb.example.com"
+    port: 27017
+    user: "datashield_user"
+    password: "secure-password"
+  mysql:
+    host: "my-mysql.example.com"
+    port: 3306
+    database: "datashield_db"
+    user: "datashield_user"
+    password: "secure-password"
 
 opal:
   config:
     administratorPassword: "my-secure-opal-password"
-
-rock:
-  config:
-    administratorPassword: "my-secure-rock-password"
 ```
 
 ```bash
-helm install datashield ./datashield -f custom-values.yaml
+helm install datashield ./datashield -f custom-db-values.yaml
 ```
 
-### Installation with MySQL Enabled
+#### Installation with External Secrets
 
 ```yaml
-# mysql-values.yaml
-mysql:
-  enabled: true
-  auth:
-    rootPassword: "my-mysql-root-password"
-    password: "my-mysql-user-password"
+# external-secrets-values.yaml
+externalDatabases:
+  mongodb:
+    existingSecret: "mongodb-credentials"
+    existingSecretKeys:
+      host: "hostname"
+      port: "port"
+      user: "username"
+      password: "password"
+  mysql:
+    existingSecret: "mysql-credentials"
+    existingSecretKeys:
+      host: "hostname"
+      port: "port"
+      database: "database"
+      user: "username"
+      password: "password"
 
-mongodb:
-  enabled: true  # Keep MongoDB for metadata
+opal:
+  config:
+    existingSecret: "opal-credentials"
 ```
 
 ```bash
-helm install datashield ./datashield -f mysql-values.yaml
+helm install datashield ./datashield -f external-secrets-values.yaml
 ```
 
-### Production Installation with All Components
+#### Production Installation with All Components
 
 ```yaml
 # production-values.yaml
+# External database configuration
+externalDatabases:
+  mongodb:
+    host: "prod-mongodb.example.com"
+    port: 27017
+    user: "datashield"
+    password: "production-password"
+  mysql:
+    host: "prod-mysql.example.com"
+    port: 3306
+    database: "datashield"
+    user: "datashield"
+    password: "production-password"
+
 # Increase resource limits
 opal:
   resources:
@@ -243,33 +317,17 @@ agate:
 mica:
   enabled: true
 
-mysql:
-  enabled: true
-
 # Configure ingress for your domain
 ingress:
-  hosts:
-    - host: datashield.example.com
-      paths:
-        - path: /opal(/|$)(.*)
-          pathType: ImplementationSpecific
-          service:
-            name: opal
-            port: 8080
+  host: datashield.example.com
   tls:
     - secretName: datashield-tls
-      hosts:
-        - datashield.example.com
 
 # Use custom storage class
 global:
   storageClass: fast-ssd
 
 # Increase persistent volume sizes
-mongodb:
-  persistence:
-    size: 50Gi
-
 opal:
   persistence:
     size: 100Gi
@@ -300,9 +358,9 @@ For the default installation:
 
 The chart mounts persistent volumes for:
 
-- MongoDB data at `/data/db`
 - Opal data at `/srv`
-- MySQL data at `/var/lib/mysql` (if enabled)
+
+**Note**: Database persistence is handled by your external database deployments (MongoDB, MySQL, etc.) deployed separately.
 
 ## Security Considerations
 

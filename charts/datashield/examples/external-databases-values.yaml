@@ -1,0 +1,159 @@
+# Example values file showing how to configure external databases for DataShield
+# This file demonstrates various ways to connect to external MongoDB, MySQL, MariaDB, and PostgreSQL databases
+
+# ================================
+# External Database Configuration
+# ================================
+
+externalDatabases:
+  # MongoDB Configuration
+  # Deploy MongoDB using: helm install mongodb bitnami/mongodb --set auth.rootUser=root --set auth.rootPassword=example
+  mongodb:
+    host: "mongodb"  # Service name of your MongoDB deployment
+    port: 27017
+    user: "root"
+    password: "example"
+    # Alternative: Use existing Kubernetes secret
+    # existingSecret: "mongodb-credentials"
+    # existingSecretKeys:
+    #   host: "hostname"
+    #   port: "port"
+    #   user: "username" 
+    #   password: "password"
+
+  # MySQL Configuration  
+  # Deploy MySQL using: helm install mysql bitnami/mysql --set auth.database=opal --set auth.username=opal --set auth.password=password
+  mysql:
+    host: "mysql"  # Service name of your MySQL deployment
+    port: 3306
+    database: "opal"
+    user: "opal"
+    password: "password"
+    # Alternative: Use existing Kubernetes secret
+    # existingSecret: "mysql-credentials"
+    # existingSecretKeys:
+    #   host: "hostname"
+    #   port: "port"
+    #   database: "database"
+    #   user: "username"
+    #   password: "password"
+
+  # MariaDB Configuration
+  # Deploy MariaDB using: helm install mariadb bitnami/mariadb --set auth.database=opal --set auth.username=opal --set auth.password=password
+  mariadb:
+    host: "mariadb"  # Service name of your MariaDB deployment
+    port: 3306
+    database: "opal"
+    user: "opal"
+    password: "password"
+
+  # PostgreSQL Configuration
+  # Deploy PostgreSQL using: helm install postgresql bitnami/postgresql --set auth.database=opal --set auth.username=opal --set auth.password=password
+  postgresql:
+    host: "postgresql"  # Service name of your PostgreSQL deployment
+    port: 5432
+    database: "opal"
+    user: "opal"
+    password: "password"
+
+# ================================
+# Opal Configuration
+# ================================
+
+opal:
+  enabled: true
+  
+  # Opal administrator password (will be set as environment variable OPAL_ADMINISTRATOR_PASSWORD)
+  config:
+    administratorPassword: "admin-password-123"
+    # Alternative: Use existing secret
+    # existingSecret: "opal-admin-credentials"
+    
+    csrfAllowed: "datashield.local"
+    httpsPort: "-1"
+    contextPath: ""
+
+  # Demo data configuration
+  demo:
+    enabled: true
+    userName: "dsuser"
+    projectName: "CNSIM"
+    tableName: "CNSIM99"
+
+  # Resource configuration for production
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+  # Persistence configuration
+  persistence:
+    enabled: true
+    size: 10Gi
+
+# ================================
+# Rock Configuration  
+# ================================
+
+rock:
+  enabled: true
+  
+  # Rock will be available to Opal via environment variable ROCK_HOSTS=rock:8085
+  service:
+    port: 8085
+
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+# ================================
+# Optional Components
+# ================================
+
+# Agate (Authentication & Authorization)
+agate:
+  enabled: false  # Set to true if you want to use Agate
+
+# Mica (Metadata Catalog)  
+mica:
+  enabled: false  # Set to true if you want to use Mica
+
+# ================================
+# Ingress Configuration
+# ================================
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: datashield.local
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+  tls:
+    - secretName: datashield-tls
+
+# ================================
+# Security Context
+# ================================
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10041
+  runAsGroup: 10041
+  fsGroup: 10041
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 10041
+  runAsGroup: 10041
+  allowPrivilegeEscalation: false
