@@ -124,6 +124,18 @@ mysql:
     database: "dsdb"
     username: "dsdb_user"
 
+# PostgreSQL configuration - The user is expected to provide an existing PostgreSQL database
+postgresql:
+  enabled: false
+  # PostgreSQL configuration
+  auth:
+    # External secret reference (if using existing Kubernetes secrets)
+    # If provided, no random secrets will be generated for PostgreSQL
+    existingSecret: ""
+    # Default values for generated secrets (used only when existingSecret is not provided)
+    database: "dsdb"
+    username: "dsdb_user"
+
 # Opal configuration
 opal:
   enabled: true
@@ -243,7 +255,7 @@ rock:
     # External secret reference (if using existing Kubernetes secrets)
     # If provided, no random secrets will be generated for Rock
     existingSecret: ""
-    administratorName: "admin"
+    administratorName: "administrator"
     managerName: "manager"
     userName: "user"
   

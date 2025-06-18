@@ -207,6 +207,17 @@ Get MySQL secret name - either existing or generated
 {{- end }}
 
 {{/*
+Get PostgreSQL secret name - either existing or generated
+*/}}
+{{- define "datashield.postgresql.secretName" -}}
+{{- if .Values.postgresql.auth.existingSecret -}}
+{{- .Values.postgresql.auth.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Get Opal secret name - either existing or generated
 */}}
 {{- define "datashield.opal.secretName" -}}
@@ -256,6 +267,17 @@ Get Mica secret name - either existing or generated
 {{- define "datashield.mica.secretName" -}}
 {{- if .Values.mica.config.existingSecret -}}
 {{- .Values.mica.config.existingSecret -}}
+{{- else -}}
+{{- include "datashield.secretName" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Get OPAL PostgreSQL secret name - either existing or generated
+*/}}
+{{- define "datashield.opal.postgres.secretName" -}}
+{{- if .Values.opal.postgres.existingSecret -}}
+{{- .Values.opal.postgres.existingSecret -}}
 {{- else -}}
 {{- include "datashield.secretName" . -}}
 {{- end -}}

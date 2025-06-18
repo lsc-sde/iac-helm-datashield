@@ -84,6 +84,28 @@ spec:
                   name: {{ include "datashield.mysql.secretName" . }}
                   key: mysql-password
             {{- end }}
+            {{- if .Values.opal.postgres.enabled }}
+            - name: POSTGRESDATA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.opal.postgres.secretName" . }}
+                  key: postgres-host
+            - name: POSTGRESDATA_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.opal.postgres.secretName" . }}
+                  key: postgres-database
+            - name: POSTGRESDATA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.opal.postgres.secretName" . }}
+                  key: postgres-username
+            - name: POSTGRESDATA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "datashield.opal.postgres.secretName" . }}
+                  key: postgres-password
+            {{- end }}
             - name: OPAL_ADMINISTRATOR_PASSWORD
               valueFrom:
                 secretKeyRef:
