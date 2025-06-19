@@ -128,8 +128,6 @@ opal:
   args: 
     - "-c"
     - |
-      # Create conf directory if it doesn't exist
-      mkdir -p /srv/conf
       # Reconstruct opal-config.properties from individual ConfigMap files
       echo "# Generated Opal Configuration Properties" > /srv/conf/opal-config.properties
       echo "# Generated on $(date)" >> /srv/conf/opal-config.properties
