@@ -59,6 +59,14 @@ spec:
               containerPort: 8080
               protocol: TCP
           env:
+            # Opal configuration properties from ConfigMap
+            {{- range $key, $value := .Values.opal.config.properties }}
+            - name: OPAL_CONFIG_{{ $key | replace "." "_" | upper }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "datashield.opal.name" . }}-config
+                  key: {{ $key }}
+            {{- end }}
             # MongoDB connection
             - name: MONGO_HOST
               {{- if .Values.externalDatabases.mongodb.existingSecret }}
@@ -250,6 +258,9 @@ spec:
           volumeMounts:
             - name: opal-data
               mountPath: /srv
+            - name: opal-config
+              mountPath: /etc/opal-config
+              readOnly: true
             {{- if .Values.opal.demo.enabled }}
             - name: opal-demo-config
               mountPath: /demo-customisations
@@ -265,6 +276,9 @@ spec:
                   - /demo-customisations/opal-demo-customisation.sh > /customisation_output.txt 2>&1
           {{- end }}
       volumes:
+        - name: opal-config
+          configMap:
+            name: {{ include "datashield.opal.name" . }}-config
         {{- if .Values.opal.demo.enabled }}
         - name: opal-demo-config
           configMap:

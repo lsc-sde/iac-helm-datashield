@@ -124,9 +124,26 @@ opal:
   
   # Command and args to override Docker entrypoint for Azure File share compatibility
   # Uncomment these lines when using Azure File shares to bypass chown operations
-  # command: ["/bin/bash"]
-  # args: ["-c", "exec gosu opal /opt/opal/bin/start.sh"]
-  
+  command: ["/bin/bash"]
+  args: 
+    - "-c"
+    - |
+      # Create conf directory if it doesn't exist
+      mkdir -p /srv/conf
+      # Reconstruct opal-config.properties from individual ConfigMap files
+      echo "# Generated Opal Configuration Properties" > /srv/conf/opal-config.properties
+      echo "# Generated on $(date)" >> /srv/conf/opal-config.properties
+      echo "" >> /srv/conf/opal-config.properties
+      # Add all properties from the mounted ConfigMap files
+      for file in /etc/opal-config/*; do
+        if [ -f "$file" ]; then
+          key=$(basename "$file")
+          value=$(cat "$file")
+          echo "$key=$value" >> /srv/conf/opal-config.properties
+        fi
+      done
+      # Start Opal server (its own startup script will merge with environment variables)
+      /opt/opal/bin/start.sh
   service:
     type: ClusterIP
     port: 8080
@@ -162,6 +179,11 @@ opal:
     contextPath: ""
     # Administrator password for Opal
     administratorPassword: "password"
+    
+    # Custom opal-config.properties file content
+    # Users can provide their own properties file using --set-file opal.config.customPropertiesFile=./my-opal-config.properties
+    # If not provided, the default config/opal-config.properties from the chart will be used
+    customPropertiesFile: ""
   
   # Health check probes
   livenessProbe:

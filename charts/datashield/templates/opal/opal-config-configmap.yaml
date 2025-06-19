@@ -1,0 +1,25 @@
+{{- if .Values.opal.enabled }}
+{{- $propertiesContent := "" }}
+{{- if .Values.opal.config.customPropertiesFile }}
+  {{- $propertiesContent = .Values.opal.config.customPropertiesFile }}
+{{- else }}
+  {{- $propertiesContent = .Files.Get "config/opal-config.properties" }}
+{{- end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "datashield.opal.name" . }}-config
+  labels:
+    {{- include "datashield.opal.labels" . | nindent 4 }}
+data:
+{{- range $line := splitList "\n" $propertiesContent }}
+  {{- if and $line (not (hasPrefix "#" (trim $line))) (contains "=" $line) }}
+    {{- $parts := splitList "=" $line }}
+    {{- if gt (len $parts) 1 }}
+      {{- $key := trim (index $parts 0) }}
+      {{- $value := trim (join "=" (rest $parts)) }}
+  {{ $key | quote }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
