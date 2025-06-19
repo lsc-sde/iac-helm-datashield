@@ -225,10 +225,95 @@ spec:
                 secretKeyRef:
                   name: {{ include "datashield.opal.secretName" . }}
                   key: opal-administrator-password
+            
+            # Opal application URL configuration
+            {{- if .Values.opal.config.appUrl }}
+            - name: APP_URL
+              value: {{ .Values.opal.config.appUrl | quote }}
+            {{- end }}
+            
+            # Opal context path (already exists as org.obiba.opal.server.context-path)
+            - name: APP_CONTEXT_PATH
+              value: {{ .Values.opal.config.contextPath | quote }}
+            
+            # Agate configuration
+            {{- if .Values.opal.config.agateHost }}
+            - name: AGATE_HOST
+              value: {{ .Values.opal.config.agateHost | quote }}
+            {{- end }}
+            {{- if .Values.opal.config.agatePort }}
+            - name: AGATE_PORT
+              value: {{ .Values.opal.config.agatePort | quote }}
+            {{- end }}
+            {{- if .Values.opal.config.agateUrl }}
+            - name: AGATE_URL
+              value: {{ .Values.opal.config.agateUrl | quote }}
+            {{- end }}
+            
+            # Rock R server configuration
             {{- if .Values.rock.enabled }}
             - name: ROCK_HOSTS
               value: "{{ include "datashield.rock.name" . }}:{{ .Values.rock.service.port }}"
             {{- end }}
+            {{- if .Values.opal.config.rockAdministratorUser }}
+            - name: ROCK_ADMINISTRATOR_USER
+              value: {{ .Values.opal.config.rockAdministratorUser | quote }}
+            {{- end }}
+            {{- if .Values.opal.config.rockAdministratorPassword }}
+            - name: ROCK_ADMINISTRATOR_PASSWORD
+              {{- if .Values.opal.config.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opal.config.existingSecret }}
+                  key: rock-administrator-password
+              {{- else }}
+              value: {{ .Values.opal.config.rockAdministratorPassword | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.opal.config.rockManagerUser }}
+            - name: ROCK_MANAGER_USER
+              value: {{ .Values.opal.config.rockManagerUser | quote }}
+            {{- end }}
+            {{- if .Values.opal.config.rockManagerPassword }}
+            - name: ROCK_MANAGER_PASSWORD
+              {{- if .Values.opal.config.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opal.config.existingSecret }}
+                  key: rock-manager-password
+              {{- else }}
+              value: {{ .Values.opal.config.rockManagerPassword | quote }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.opal.config.rockUserUser }}
+            - name: ROCK_USER_USER
+              value: {{ .Values.opal.config.rockUserUser | quote }}
+            {{- end }}
+            {{- if .Values.opal.config.rockUserPassword }}
+            - name: ROCK_USER_PASSWORD
+              {{- if .Values.opal.config.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opal.config.existingSecret }}
+                  key: rock-user-password
+              {{- else }}
+              value: {{ .Values.opal.config.rockUserPassword | quote }}
+              {{- end }}
+            {{- end }}
+            
+            # R repositories configuration
+            {{- if .Values.opal.config.rRepos }}
+            - name: R_REPOS
+              value: {{ .Values.opal.config.rRepos | quote }}
+            {{- end }}
+            
+            # Legacy R server configuration
+            {{- if .Values.opal.config.rserverHost }}
+            - name: RSERVER_HOST
+              value: {{ .Values.opal.config.rserverHost | quote }}
+            {{- end }}
+            
+            # CSRF configuration
             - name: CSRF_ALLOWED
               value: {{ .Values.opal.config.csrfAllowed | quote }}
             - name: org.obiba.opal.https.port

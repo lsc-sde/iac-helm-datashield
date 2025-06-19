@@ -178,6 +178,36 @@ opal:
     # Administrator password for Opal
     administratorPassword: "password"
     
+    # Opal application URL (APP_URL)
+    # Used for org.obiba.opal.public.url property
+    appUrl: ""
+    
+    # Agate configuration
+    # Agate host and port for authentication service
+    agateHost: ""
+    agatePort: ""
+    # Alternative: full Agate URL (takes precedence over host/port if set)
+    agateUrl: ""
+    
+    # Rock R server configuration
+    # Rock administrator credentials
+    rockAdministratorUser: ""
+    rockAdministratorPassword: ""
+    # Rock manager credentials  
+    rockManagerUser: ""
+    rockManagerPassword: ""
+    # Rock user credentials
+    rockUserUser: ""
+    rockUserPassword: ""
+    
+    # R repositories configuration
+    # Comma-separated list of R repositories
+    rRepos: ""
+    
+    # Legacy R server configuration (deprecated)
+    # R server host for legacy setups
+    rserverHost: ""
+    
     # Custom opal-config.properties file content
     # Users can provide their own properties file using --set-file opal.config.customPropertiesFile=./my-opal-config.properties
     # If not provided, the default config/opal-config.properties from the chart will be used
