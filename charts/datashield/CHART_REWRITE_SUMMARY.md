@@ -10,19 +10,15 @@ This document summarizes the comprehensive rewrite of the DataShield Helm chart 
 - **Problem**: Template errors like `wrong type for value; expected string; got map[string]interface {}` in `mongo-deployment.yaml:26`
 - **Solution**: Fixed incorrect template syntax and nindent usage throughout all templates
 
-### 2. Missing Dependencies
-- **Problem**: Rock deployment referenced `{{ .Values.rock.secretName }}` which was undefined
-- **Solution**: Created centralized secrets management and updated all references
-
-### 3. Inconsistent Naming Conventions
+### 2. Inconsistent Naming Conventions
 - **Problem**: Mixed naming patterns (`mysqldb` vs `mysql`, inconsistent helper functions)
 - **Solution**: Standardized all naming conventions and updated helper functions
 
-### 4. Security Issues
+### 3. Security Issues
 - **Problem**: Hardcoded passwords in values, no secrets management
 - **Solution**: Implemented proper Kubernetes secrets with base64 encoding
 
-### 5. Resource Management Issues
+### 4. Resource Management Issues
 - **Problem**: Inconsistent resource definitions, missing health checks
 - **Solution**: Standardized resource requests/limits and added comprehensive health checks
 
@@ -141,7 +137,6 @@ helm install datashield ./datashield
 ```bash
 helm install datashield ./datashield \
   --set opal.resources.limits.memory=8Gi \
-  --set rock.resources.limits.memory=8Gi \
   --set mongodb.persistence.size=50Gi \
   --set opal.persistence.size=100Gi
 ```

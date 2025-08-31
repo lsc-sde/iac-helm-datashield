@@ -7,8 +7,7 @@ A comprehensive, production-ready Helm chart for deploying DataShield, a platfor
 DataShield is a suite of software packages that enable privacy-preserving federated data analysis. This Helm chart deploys the complete DataShield infrastructure with enterprise-grade features:
 
 ### Core Components
-- **Opal** (5.1.4): Data repository and analysis server with OrientDB backend
-- **Rock** (2.1.4): R server for DataShield statistical analysis
+- **Opal** (5.2.0): Data repository and analysis server with OrientDB backend
 - **Agate** (2.8): Optional authentication and authorization server
 - **Mica** (5.3): Optional metadata catalog and data discovery portal
 
@@ -193,7 +192,7 @@ DataShield requires external databases to be deployed separately. Configure the 
 |-----------|-------------|---------|
 | `opal.enabled` | Enable Opal deployment | `true` |
 | `opal.image.repository` | Opal image repository | `obiba/opal` |
-| `opal.image.tag` | Opal image tag | `5.1.4` |
+| `opal.image.tag` | Opal image tag | `5.2.0` |
 | `opal.image.pullPolicy` | Opal image pull policy | `IfNotPresent` |
 | `opal.service.type` | Opal service type | `ClusterIP` |
 | `opal.service.port` | Opal service port | `8080` |
@@ -209,6 +208,35 @@ DataShield requires external databases to be deployed separately. Configure the 
 | `opal.resources.limits.memory` | Memory limit | `4Gi` |
 | `opal.resources.requests.cpu` | CPU request | `1000m` |
 | `opal.resources.requests.memory` | Memory request | `2Gi` |
+
+#### Rock Pod Specifications Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `opal.rockSpecs[0].id` | Rock server profile identifier | `default` |
+| `opal.rockSpecs[0].type` | Rock server type | `rock` |
+| `opal.rockSpecs[0].description` | Rock server description | - |
+| `opal.rockSpecs[0].enabled` | Enable this Rock specification | `true` |
+| `opal.rockSpecs[0].namespace` | Namespace in which pod is to be created. Empty means same as Opal's. | - |
+| `opal.rockSpecs[0].nodeName` | Name of the node in which pod is to be created. | - |
+| `opal.rockSpecs[0].labels[0].key` | Pod label key | - |
+| `opal.rockSpecs[0].labels[0].value` | Pod label value | - |
+| `opal.rockSpecs[0].nodeSelector[0].key` | Node selection rule's key | - |
+| `opal.rockSpecs[0].nodeSelector[0].value` | Node selection rule's value | - |
+| `opal.rockSpecs[0].tolerations[0].key` | Pod toleration key | - |
+| `opal.rockSpecs[0].tolerations[0].operator` | Pod toleration operator | - |
+| `opal.rockSpecs[0].tolerations[0].value` | Pod toleration value | - |
+| `opal.rockSpecs[0].tolerations[0].effect` | Pod toleration effect | - |
+| `opal.rockSpecs[0].tolerations[0].tolerationSeconds` | Pod toleration seconds | - |
+| `opal.rockSpecs[0].container.name` | Pod name prefix | `rock-default` |
+| `opal.rockSpecs[0].container.image` | Rock container image | `datashield/rock-base:latest` |
+| `opal.rockSpecs[0].container.imagePullPolicy` | Image pull policy | `IfNotPresent` |
+| `opal.rockSpecs[0].container.imagePullSecret` | Image pull secret | - |
+| `opal.rockSpecs[0].container.port` | Rock container port | `8085` |
+| `opal.rockSpecs[0].container.resources.requests.cpu` | CPU request | `1000m` |
+| `opal.rockSpecs[0].container.resources.requests.memory` | Memory request | `500Mi` |
+| `opal.rockSpecs[0].container.resources.limits.cpu` | CPU limit | `2000m` |
+| `opal.rockSpecs[0].container.resources.limits.memory` | Memory limit | `1Gi` |
 
 #### Custom Opal Configuration Properties
 
@@ -285,26 +313,6 @@ You can provide your own `opal-config.properties` file in several ways:
 - This approach allows Kustomize users to patch individual properties without replacing the entire configuration
 
 If no custom properties file is provided, the chart will use the default `config/opal-config.properties` included with the chart.
-
-### Rock Configuration
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `rock.enabled` | Enable Rock deployment | `true` |
-| `rock.replicaCount` | Number of Rock replicas | `1` |
-| `rock.image.repository` | Rock image repository | `obiba/rock` |
-| `rock.image.tag` | Rock image tag | `2.1.4` |
-| `rock.image.pullPolicy` | Rock image pull policy | `IfNotPresent` |
-| `rock.service.type` | Rock service type | `ClusterIP` |
-| `rock.service.port` | Rock service port | `8085` |
-| `rock.config.existingSecret` | Use existing secret for Rock config | `""` |
-| `rock.config.administratorName` | Rock administrator name | `administrator` |
-| `rock.config.managerName` | Rock manager name | `manager` |
-| `rock.config.userName` | Rock user name | `user` |
-| `rock.resources.limits.cpu` | CPU limit | `2000m` |
-| `rock.resources.limits.memory` | Memory limit | `4Gi` |
-| `rock.resources.requests.cpu` | CPU request | `1000m` |
-| `rock.resources.requests.memory` | Memory request | `2Gi` |
 
 ### Agate Configuration (Optional)
 
@@ -622,7 +630,6 @@ kubectl get pods -l app.kubernetes.io/instance=RELEASE-NAME
 kubectl get statefulset RELEASE-NAME-datashield-opal
 
 # Check logs
-kubectl logs deployment/RELEASE-NAME-datashield-rock
 kubectl logs statefulset/RELEASE-NAME-datashield-opal
 
 # Describe pod for events
@@ -639,7 +646,6 @@ kubectl get secret RELEASE-NAME-datashield-secrets -o jsonpath='{.data.opal-admi
 
 # Port forward to access services
 kubectl port-forward service/RELEASE-NAME-datashield-opal 8080:8080
-kubectl port-forward service/RELEASE-NAME-datashield-rock 8085:8085
 
 # Test connectivity
 kubectl run test-pod --rm -i --tty --image=busybox -- /bin/sh

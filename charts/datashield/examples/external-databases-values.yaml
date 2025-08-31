@@ -95,25 +95,6 @@ opal:
     size: 10Gi
 
 # ================================
-# Rock Configuration  
-# ================================
-
-rock:
-  enabled: true
-  
-  # Rock will be available to Opal via environment variable ROCK_HOSTS=rock:8085
-  service:
-    port: 8085
-
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 1000m
-      memory: 2Gi
-
-# ================================
 # Optional Components
 # ================================
 

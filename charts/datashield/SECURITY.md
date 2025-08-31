@@ -25,10 +25,6 @@ By default, the chart generates secure 16-character alphanumeric passwords for a
 opal:
   enabled: true
   # existingSecret: ""  # Leave empty for auto-generation
-
-rock:
-  enabled: true
-  # config.existingSecret: ""  # Leave empty for auto-generation
 ```
 
 ### External Secret Integration
@@ -58,10 +54,6 @@ externalDatabases:
 opal:
   config:
     existingSecret: "opal-credentials"
-
-rock:
-  config:
-    existingSecret: "rock-credentials"
 
 agate:
   enabled: true
@@ -131,7 +123,6 @@ When creating external secrets, ensure they contain the following keys:
 |-----------|-------------|-------------|
 | **Opal** | `opal-administrator-password` | Administrator password for Opal web interface |
 | **Opal Demo** | `opal-demo-user-password` | Demo user password (when demo mode enabled) |
-| **Rock** | `rock-administrator-password`<br>`rock-manager-password`<br>`rock-user-password` | Different role passwords for Rock R server |
 | **Agate** | `agate-administrator-password` | Administrator password for Agate auth server |
 | **Mica** | `mica-administrator-password` | Administrator password for Mica catalog |
 
@@ -153,14 +144,6 @@ For external databases, the following keys are supported:
 ```bash
 kubectl create secret generic opal-credentials \
   --from-literal=opal-administrator-password=my-secure-admin-password
-```
-
-#### Rock Secret
-```bash
-kubectl create secret generic rock-credentials \
-  --from-literal=rock-administrator-password=my-secure-admin-password \
-  --from-literal=rock-manager-password=my-secure-manager-password \
-  --from-literal=rock-user-password=my-secure-user-password
 ```
 
 #### Agate Secret
@@ -274,15 +257,6 @@ opal:
     requests:
       cpu: 1000m
       memory: 2Gi
-
-rock:
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 1000m
-      memory: 2Gi
 ```
 
 ### Benefits
@@ -306,10 +280,6 @@ If upgrading from versions that used plaintext passwords in `values.yaml`:
 opal:
   enabled: true
   # existingSecret: ""  # Auto-generation enabled
-
-rock:
-  enabled: true
-  # config.existingSecret: ""  # Auto-generation enabled
 ```
 
 #### Option B: Migrate to External Secrets (Recommended for Production)
@@ -408,7 +378,6 @@ kubectl get secrets
 
 # Decode specific secret values
 kubectl get secret RELEASE-NAME-datashield-secrets -o jsonpath='{.data.opal-administrator-password}' | base64 --decode
-kubectl get secret RELEASE-NAME-datashield-secrets -o jsonpath='{.data.rock-administrator-password}' | base64 --decode
 
 # View all secret keys (without values)
 kubectl describe secret RELEASE-NAME-datashield-secrets

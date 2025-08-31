@@ -68,10 +68,6 @@ Component specific names
 {{- printf "%s-opal" (include "datashield.fullname" .) }}
 {{- end }}
 
-{{- define "datashield.rock.name" -}}
-{{- printf "%s-rock" (include "datashield.fullname" .) }}
-{{- end }}
-
 {{- define "datashield.agate.name" -}}
 {{- printf "%s-agate" (include "datashield.fullname" .) }}
 {{- end }}
@@ -86,11 +82,6 @@ Component specific labels
 {{- define "datashield.opal.labels" -}}
 {{ include "datashield.labels" . }}
 app.kubernetes.io/component: opal
-{{- end }}
-
-{{- define "datashield.rock.labels" -}}
-{{ include "datashield.labels" . }}
-app.kubernetes.io/component: rock
 {{- end }}
 
 {{- define "datashield.agate.labels" -}}
@@ -109,11 +100,6 @@ Component specific selector labels
 {{- define "datashield.opal.selectorLabels" -}}
 {{ include "datashield.selectorLabels" . }}
 app.kubernetes.io/component: opal
-{{- end }}
-
-{{- define "datashield.rock.selectorLabels" -}}
-{{ include "datashield.selectorLabels" . }}
-app.kubernetes.io/component: rock
 {{- end }}
 
 {{- define "datashield.agate.selectorLabels" -}}
@@ -179,17 +165,6 @@ Get Opal demo secret name - either existing or generated
 {{- end }}
 
 {{/*
-Get Rock secret name - either existing or generated
-*/}}
-{{- define "datashield.rock.secretName" -}}
-{{- if .Values.rock.config.existingSecret -}}
-{{- .Values.rock.config.existingSecret -}}
-{{- else -}}
-{{- include "datashield.secretName" . -}}
-{{- end -}}
-{{- end }}
-
-{{/*
 Get Agate secret name - either existing or generated
 */}}
 {{- define "datashield.agate.secretName" -}}
@@ -220,9 +195,6 @@ Check if any component needs generated secrets
 {{- $needsGenerated = true -}}
 {{- end -}}
 {{- if and .Values.opal.enabled .Values.opal.demo.enabled (not .Values.opal.demo.existingSecret) -}}
-{{- $needsGenerated = true -}}
-{{- end -}}
-{{- if and .Values.rock.enabled (not .Values.rock.config.existingSecret) -}}
 {{- $needsGenerated = true -}}
 {{- end -}}
 {{- if and .Values.agate.enabled (not .Values.agate.config.existingSecret) -}}
