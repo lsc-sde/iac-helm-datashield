@@ -24,6 +24,11 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# Service account for the Rock spawner
+# This is gives the permission to the Opal server to spawn new Rock containers
+rockServiceAccount:
+  name: rock-spawner-service-account
+
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
@@ -119,7 +124,7 @@ opal:
   # This is now a StatefulSet with exactly 1 replica to prevent database corruption
   image:
     repository: obiba/opal
-    tag: "5.1.4"
+    tag: "5.2.0"
     pullPolicy: IfNotPresent
   
   # Command and args to override Docker entrypoint for Azure File share compatibility
@@ -167,6 +172,31 @@ opal:
   tolerations: []
   affinity: {}
   
+  # Rock pod specifications
+  rockSpecs:
+    - id: default # Identifier of the R server profile, it is required to have at least a profile with the "default" name
+      type: rock # Required
+      # When enabled, Opal will use this specification to spawn new Rock containers
+      enabled: true
+      container:
+        # Pod name prefix
+        name: rock-default
+        # Container image
+        image: datashield/rock-base:latest
+        # Container image pull policy
+        imagePullPolicy: IfNotPresent
+        # Container port (necessarily 8085 for Rock)
+        port: 8085
+        resources:
+          # Requested resources at pod start
+          requests:
+            cpu: 1000m
+            memory: 500Mi
+          # Limits of the resources used by the pod
+          limits:
+            cpu: 2000m
+            memory: 1Gi
+
   # Opal configuration
   config:
     # External secret reference (if using existing Kubernetes secrets)
@@ -190,23 +220,8 @@ opal:
     agateUrl: ""
     
     # Rock R server configuration
-    # Rock administrator credentials
-    rockAdministratorUser: ""
-    rockAdministratorPassword: ""
-    # Rock manager credentials  
-    rockManagerUser: ""
-    rockManagerPassword: ""
-    # Rock user credentials
-    rockUserUser: ""
-    rockUserPassword: ""
-    
-    # R repositories configuration
-    # Comma-separated list of R repositories
-    rRepos: ""
-    
-    # Legacy R server configuration (deprecated)
-    # R server host for legacy setups
-    rserverHost: ""
+    # Rock pod images allowed
+    rockImagesAllowed: ""
     
     # Custom opal-config.properties file content
     # Users can provide their own properties file using --set-file opal.config.customPropertiesFile=./my-opal-config.properties
@@ -248,61 +263,6 @@ opal:
     cohortTable: "conditions1"
     cohortSourceDataUrl: "https://raw.githubusercontent.com/OllyButters/ds_data/main/synthea/conditionsa.csv"
 
-# Rock configuration
-rock:
-  enabled: true
-  replicaCount: 1
-  image:
-    repository: obiba/rock
-    tag: "2.1.4"
-    pullPolicy: IfNotPresent
-  
-  # Command and args to override Docker entrypoint if needed
-  # command: ["/bin/bash"]
-  # args: ["-c", "exec /usr/local/bin/docker-entrypoint.sh"]
-  
-  service:
-    type: ClusterIP
-    port: 8085
-    annotations: {}
-  
-  resources:
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-    requests:
-      cpu: 1000m
-      memory: 2Gi
-  
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  
-  # Rock configuration
-  config:
-    # External secret reference (if using existing Kubernetes secrets)
-    # If provided, no random secrets will be generated for Rock
-    existingSecret: ""
-    administratorName: "administrator"
-    managerName: "manager"
-    userName: "user"
-  
-  # Health checks
-  livenessProbe:
-    httpGet:
-      path: /health
-      port: http
-    initialDelaySeconds: 60
-    periodSeconds: 30
-    timeoutSeconds: 10
-  
-  readinessProbe:
-    httpGet:
-      path: /ready
-      port: http
-    initialDelaySeconds: 30
-    periodSeconds: 10
-    timeoutSeconds: 5
 
 # Agate configuration
 agate:

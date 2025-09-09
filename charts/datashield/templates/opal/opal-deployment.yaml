@@ -251,66 +251,15 @@ spec:
             {{- end }}
             
             # Rock R server configuration
-            {{- if .Values.rock.enabled }}
             - name: ROCK_HOSTS
-              value: "{{ include "datashield.rock.name" . }}:{{ .Values.rock.service.port }}"
+              value: ""
+            {{- if .Values.opal.config.rockImagesAllowed }}
+            - name: ROCK_POD_IMAGES_ALLOWED
+              value: {{ .Values.opal.config.rockImagesAllowed }}
             {{- end }}
-            {{- if .Values.opal.config.rockAdministratorUser }}
-            - name: ROCK_ADMINISTRATOR_USER
-              value: {{ .Values.opal.config.rockAdministratorUser | quote }}
-            {{- end }}
-            {{- if .Values.opal.config.rockAdministratorPassword }}
-            - name: ROCK_ADMINISTRATOR_PASSWORD
-              {{- if .Values.opal.config.existingSecret }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.opal.config.existingSecret }}
-                  key: rock-administrator-password
-              {{- else }}
-              value: {{ .Values.opal.config.rockAdministratorPassword | quote }}
-              {{- end }}
-            {{- end }}
-            {{- if .Values.opal.config.rockManagerUser }}
-            - name: ROCK_MANAGER_USER
-              value: {{ .Values.opal.config.rockManagerUser | quote }}
-            {{- end }}
-            {{- if .Values.opal.config.rockManagerPassword }}
-            - name: ROCK_MANAGER_PASSWORD
-              {{- if .Values.opal.config.existingSecret }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.opal.config.existingSecret }}
-                  key: rock-manager-password
-              {{- else }}
-              value: {{ .Values.opal.config.rockManagerPassword | quote }}
-              {{- end }}
-            {{- end }}
-            {{- if .Values.opal.config.rockUserUser }}
-            - name: ROCK_USER_USER
-              value: {{ .Values.opal.config.rockUserUser | quote }}
-            {{- end }}
-            {{- if .Values.opal.config.rockUserPassword }}
-            - name: ROCK_USER_PASSWORD
-              {{- if .Values.opal.config.existingSecret }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.opal.config.existingSecret }}
-                  key: rock-user-password
-              {{- else }}
-              value: {{ .Values.opal.config.rockUserPassword | quote }}
-              {{- end }}
-            {{- end }}
-            
-            # R repositories configuration
-            {{- if .Values.opal.config.rRepos }}
-            - name: R_REPOS
-              value: {{ .Values.opal.config.rRepos | quote }}
-            {{- end }}
-            
-            # Legacy R server configuration
-            {{- if .Values.opal.config.rserverHost }}
-            - name: RSERVER_HOST
-              value: {{ .Values.opal.config.rserverHost | quote }}
+            {{- if .Values.opal.rockSpecs }}
+            - name: ROCK_POD_SPECS
+              value: {{ .Values.opal.rockSpecs | toJson | quote }}
             {{- end }}
             
             # CSRF configuration
